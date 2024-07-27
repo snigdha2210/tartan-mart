@@ -17,6 +17,7 @@ import {
   FormLabel,
   Alert,
   Card,
+  OutlinedInput
 } from '@mui/material';
 import '../assets/AddItemPage.css';
 import Footer from '../components/Footer.jsx';
@@ -340,6 +341,9 @@ const AddItemPage = () => {
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
+                  // labelId='multiple-checkbox-label2'
+                  // id='multiple-checkbox2'
+                  input={<OutlinedInput label='Category' />}
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
