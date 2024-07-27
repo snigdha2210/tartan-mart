@@ -103,12 +103,12 @@ class Item(models.Model):
     current_status = models.CharField(max_length=20, choices=CURRENT_STATUS_CHOICES, default='listed')
     CATEGORY_CHOICES = (
         ('electronics', 'Electronics'),
-        ('textbooks', 'Textbooks'),
+        # ('textbooks', 'Textbooks'),
         ('furniture', 'Furniture'),
         ('clothing', 'Clothing'),
         ('home', 'Home'),
         ('beauty', 'Beauty'),
-        ('toys', 'Toys'),
+        # ('toys', 'Toys'),
         ('other', 'Other'),
     )
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, default='clothing')
