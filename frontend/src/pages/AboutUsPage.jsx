@@ -105,7 +105,7 @@ const AboutUsPage = () => {
         <div className='team'>
           <div className='team-title'>
             <Typography variant='h6' gutterBottom>
-              Development Team
+              Contributors
             </Typography>
           </div>
           <hr width='100px' className='centered-hr' />
