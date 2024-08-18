@@ -1,9 +1,9 @@
 export const categories = [
-  {
-    id: 1,
-    name: 'Textbooks',
-    image: 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/books.png',
-  },
+  // {
+  //   id: 1,
+  //   name: 'Textbooks',
+  //   image: 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/books.png',
+  // },
   {
     id: 2,
     name: 'Electronics',
@@ -34,24 +34,24 @@ export const categories = [
     image:
       'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/beauty.png',
   },
-  {
-    id: 7,
-    name: 'Toys',
-    image: 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/toys.png',
-  },
+  // {
+  //   id: 7,
+  //   name: 'Toys',
+  //   image: 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/toys.png',
+  // },
 ];
 
 const IMAGE_URL =
   'https://upload.wikimedia.org/wikipedia/commons/c/cd/Green_and_Black%27s_dark_chocolate_bar_2.jpg';
 
 export const categories_tabs = [
-  'Textbooks',
+  // 'Textbooks',
   'Electronics',
   'Furniture',
   'Clothing',
   'Home',
   'Beauty',
-  'Toys',
+  // 'Toys',
 ];
 
 export const IMAGE_SIZE_LIMIT = 10000000; //10 MB
