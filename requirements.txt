@@ -6,3 +6,4 @@ boto3==1.26.59
 django-storages==1.13.2
 gunicorn==20.1.0
 pillow
+drf-yasg
