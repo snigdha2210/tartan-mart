@@ -1,0 +1,9 @@
+.total-price {
+  margin-top: 40px !important;
+  margin-bottom: 40px !important;
+  font-weight: bold;
+}
+
+.payment-status {
+  height: 80vh;
+}

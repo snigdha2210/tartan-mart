@@ -1,0 +1,31 @@
+.page-title-text {
+  margin: 5px;
+  font-size: 2em;
+  font-weight: bold;
+}
+.search-input {
+  display: flex;
+  align-items: center;
+}
+
+.filters-parent {
+  display: flex;
+}
+.listings-page-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px;
+  margin-bottom: 40px;
+}
+.listings-page {
+  min-height: 70vh;
+  margin-bottom: 40px;
+}
+.listings-page-body {
+  margin-left: 6vw;
+  margin-right: 6vw;
+}
+#multiple-checkbox {
+  height: 15px;
+  width: 50px;
+}

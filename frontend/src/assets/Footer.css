@@ -1,0 +1,20 @@
+.footer {
+  background-color: black;
+  padding: 30px 0;
+  position: static;
+  width: 100%;
+  bottom: 0;
+}
+
+.footer h6 {
+  color: #6d6e71;
+}
+
+.footer p {
+  color: #e0e0e0;
+}
+
+.footer .copyright {
+  color: #6d6e71;
+  margin-top: 20px;
+}

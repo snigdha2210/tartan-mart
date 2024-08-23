@@ -1,0 +1,29 @@
+.add-item-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.add-item-form {
+  width: 100%;
+  max-width: 500px;
+}
+
+.add-item-input {
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: rgba(255, 0, 0, 0.6);
+  margin-right: 20px;
+  margin-bottom: 5px;
+}
+
+.error-message::before {
+  content: '⚠ ';
+}
+
+.page-container {
+  margin-bottom: '20px';
+}

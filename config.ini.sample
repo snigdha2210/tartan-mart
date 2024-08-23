@@ -1,0 +1,35 @@
+# To generate a new secret key, use get_random_secret_key():
+# from django.core.management.utils import get_random_secret_key
+# print(get_random_secret_key())
+# Warning: The % character is special to ConfigParser - use %%
+# Warning: Changing secret keys invalidates existing sessions,
+# so may need to delete your DB tables and re-migrate
+[Django]
+secret=
+
+[MYSQL]
+user=
+password=
+
+[Google]
+client_id=
+secret_key=
+
+[S3]
+USE_S3=TRUE
+AWS_STORAGE_BUCKET_NAME=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+
+[Stripe]
+secret_key=
+
+[Local]
+frontend_url=
+backend_url=
+session_cookie_domain=
+
+[Prod]
+frontend_url=
+backend_url=
+session_cookie_domain=
