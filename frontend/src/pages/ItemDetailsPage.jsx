@@ -59,9 +59,10 @@ const ItemDetailsPage = () => {
     return state.auth;
   });
 
-  const { status } = useSelector((state) => {
-    return state.cart;
-  });
+  {/* removing order features for live version */}
+  // const { status } = useSelector((state) => {
+  //   return state.cart;
+  // });
 
   const dispatch = useDispatch();
 
