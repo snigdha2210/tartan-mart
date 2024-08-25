@@ -4,7 +4,6 @@ import profileReducer from './reducers/profileReducer';
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import itemsReducer from './reducers/itemsReducer';
-import cartReducer from './reducers/cartReducer';
 
 const persistConfig = {
   key: 'root',
@@ -15,7 +14,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   items: itemsReducer,
   profile: profileReducer,
-  cart: cartReducer,
+  // removing order features for live version
+  // cart: cartReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
