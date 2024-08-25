@@ -26,6 +26,8 @@ const pages = ['Home', 'About Us', 'Products'];
 const settingsLogIn = ['Log In'];
 const settings = ['Profile', 'My Orders', 'Sell', 'Logout'];
 
+const showShoppingCart = false;
+
 function getSettings(loggedIn) {
   if (loggedIn) {
     return settings;
@@ -116,7 +118,9 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
             ></TabGroup>
           </Box>
           <Box>
-            <Tooltip title='Shopping Cart'>
+            {/* Hide shopping cart */}
+            {showShoppingCart ? (
+              <Tooltip title='Shopping Cart'>
               <IconButton sx={{ ml: 2 }} onClick={handleShoppingCartClick}>
                 <Badge color='secondary' badgeContent={itemCount}>
                   <ShoppingCartIcon
@@ -124,7 +128,9 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
                   />
                 </Badge>
               </IconButton>
-            </Tooltip>
+            </Tooltip>) : (<></>)
+            }
+            
             {loggedIn ? (
               <Tooltip title='Open settings'>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -16,32 +16,45 @@ function App() {
   const { isLoggedIn } = useSelector((state) => {
     return state.auth;
   });
+
+  // Hide pages
+  const showPages = {
+    'showHome': true,
+    'showListings': true,
+    'showItemDetails': true,
+    'showCheckout': false,
+    'showOrderDetails': false,
+    'showAddItem': true,
+    'showMyProfile': true,
+    'showAboutUs': true
+  };
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/home' element={<Home />} />
-        <Route path='/listings' element={<ListingsPage />} />
-        <Route path='/listings/item-detail/:id' element={<ItemDetailsPage />} />
+        <Route path='/' element={showPages.showHome ? <Home /> : <NotFound />} />
+        <Route path='/home' element={showPages.showHome ? <Home /> : <NotFound />} />
+        <Route path='/listings' element={showPages.showListings ? <ListingsPage /> : <NotFound />} />
+        <Route path='/listings/item-detail/:id' element={showPages.showItemDetails ? <ItemDetailsPage /> : <NotFound />} />
 
         <Route
           path='/checkout'
-          element={isLoggedIn ? <CheckoutPage /> : <AuthPopup />}
+          element={showPages.showCheckout ? isLoggedIn ? <CheckoutPage /> : <AuthPopup /> : <NotFound />}
         />
         <Route
           path='/order-details/:orderId'
-          element={isLoggedIn ? <OrderDetailsPageAgain /> : <AuthPopup />}
+          element={showPages.showOrderDetails ? isLoggedIn ? <OrderDetailsPageAgain /> : <AuthPopup /> : <NotFound />}
         />
         <Route
           path='/add-item'
-          element={isLoggedIn ? <AddItemPage /> : <AuthPopup />}
+          element={showPages.showAddItem ? isLoggedIn ? <AddItemPage /> : <AuthPopup /> : <NotFound />}
         />
 
         <Route
           path='/my-profile'
-          element={isLoggedIn ? <ProfilePage /> : <AuthPopup />}
+          element={showPages.showMyProfile ? isLoggedIn ? <ProfilePage /> : <AuthPopup /> : <NotFound />}
         />
-        <Route path='/about-us' element={<AboutUsPage />} />
+        <Route path='/about-us' element={showPages.showAboutUs ? <AboutUsPage /> : <NotFound />} />
         <Route path='/*' element={<NotFound />} />
       </Routes>
     </BrowserRouter>
