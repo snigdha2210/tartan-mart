@@ -164,7 +164,6 @@ const ItemDetailsPage = () => {
                       }}
                       className='add-to-cart'
                       onClick={addItemToCart}
-                      hidden={true}
                     >
                       Add To Cart
                     </Button>
@@ -192,14 +191,15 @@ const ItemDetailsPage = () => {
           </CardContent>
         </Card>
       </div>{' '}
-      <Snackbar
+      {/* removing order features for live version */}
+      {/* <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
         message={
           status === 'updated' ? 'Item added to cart!' : 'Item already in cart!'
         }
-      />
+      /> */}
       <Footer />
     </>
   );
