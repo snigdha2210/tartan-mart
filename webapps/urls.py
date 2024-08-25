@@ -27,8 +27,9 @@ urlpatterns = [
     path('listings/', views.get_listings, name='get_listings'),
     path('getProfile/', views.get_profile, name='get_profile'),
     path('updateProfile/', views.update_profile, name='update_profile'),
-    path('api/stripe/create-checkout-session', views.StripeCheckoutView.as_view()),
-    path('getOrderDetails/<int:id>/', views.get_order_details, name='get-order-details'),
-    path('getOrder/<int:id>/', views.get_order, name= "get_order"),
+    # removing order features for live version
+    # path('api/stripe/create-checkout-session', views.StripeCheckoutView.as_view()),
+    # path('getOrderDetails/<int:id>/', views.get_order_details, name='get-order-details'),
+    # path('getOrder/<int:id>/', views.get_order, name= "get_order"),
     path('updateItemStatus/<int:id>/', views.update_item_status, name="update_item"),
 ]

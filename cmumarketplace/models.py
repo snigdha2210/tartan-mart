@@ -119,55 +119,58 @@ class Item(models.Model):
     def __str__(self):
         return f'Item - {self.name}, Qty - {self.quantity}'
     
-class Order(models.Model):
-    """
-    Model representing an order placed by a user.
-    Attributes:
-        buyer (CustomUser): The user who placed the order.
-        items (ManyToManyField): The items included in the order, linked through the OrderItem model.
-        total_price (Decimal, optional): The total price of the order.
-        payment_status (str): The payment status of the order.
-        order_date (DateTime): The date and time when the order was placed.
-        checkout_id (str): The ID associated with the checkout process for the order.
-        delivery_address (str): The delivery address for the order.
-    """
-    buyer = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
-    items = models.ManyToManyField(Item, through='OrderItem')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    payment_status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('completed', 'Completed'), ('failed', 'Failed')])
-    order_date = models.DateTimeField(auto_now_add=True)
-    checkout_id = models.CharField(max_length=50000)
-    delivery_address = models.CharField(max_length= ADDRESS_LIMIT)
+'''
+removing order features for live version
+'''
+# class Order(models.Model):
+#     """
+#     Model representing an order placed by a user.
+#     Attributes:
+#         buyer (CustomUser): The user who placed the order.
+#         items (ManyToManyField): The items included in the order, linked through the OrderItem model.
+#         total_price (Decimal, optional): The total price of the order.
+#         payment_status (str): The payment status of the order.
+#         order_date (DateTime): The date and time when the order was placed.
+#         checkout_id (str): The ID associated with the checkout process for the order.
+#         delivery_address (str): The delivery address for the order.
+#     """
+#     buyer = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
+#     items = models.ManyToManyField(Item, through='OrderItem')
+#     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+#     payment_status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('completed', 'Completed'), ('failed', 'Failed')])
+#     order_date = models.DateTimeField(auto_now_add=True)
+#     checkout_id = models.CharField(max_length=50000)
+#     delivery_address = models.CharField(max_length= ADDRESS_LIMIT)
 
-    def __str__(self):
-        return f"Order {self.id} - Buyer: {self.buyer.name}, Total Price: {self.total_price}, Payment Status: {self.payment_status}, Checkout ID: {self.checkout_id}"
+#     def __str__(self):
+#         return f"Order {self.id} - Buyer: {self.buyer.name}, Total Price: {self.total_price}, Payment Status: {self.payment_status}, Checkout ID: {self.checkout_id}"
     
-class OrderItem(models.Model):
-    """
-    Model representing an item included in an order.
-    Attributes:
-        order (Order): The order to which this item belongs.
-        item (Item): The item included in the order.
-        quantity (int, optional): The quantity of the item ordered.
+# class OrderItem(models.Model):
+#     """
+#     Model representing an item included in an order.
+#     Attributes:
+#         order (Order): The order to which this item belongs.
+#         item (Item): The item included in the order.
+#         quantity (int, optional): The quantity of the item ordered.
 
-    """
+#     """
 
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
+#     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+#     item = models.ForeignKey(Item, on_delete=models.PROTECT)
+#     quantity = models.PositiveIntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
-    def increase_item_quantity(self):
-        """
-        Increases the quantity of the associated item
-            and sets its current status to 'listed'.
-        """
-        self.item.quantity += self.quantity
-        self.item.current_status = 'listed'
-        self.item.save()
+#     def increase_item_quantity(self):
+#         """
+#         Increases the quantity of the associated item
+#             and sets its current status to 'listed'.
+#         """
+#         self.item.quantity += self.quantity
+#         self.item.current_status = 'listed'
+#         self.item.save()
 
-    def __str__(self):
-        """
-         Returns a string representation of the OrderItem instance,
-            including the order ID, item name, and quantity.
-        """
-        return f"Order {self.order.id} - Item: {self.item.name}, Quantity: {self.quantity}"
+#     def __str__(self):
+#         """
+#          Returns a string representation of the OrderItem instance,
+#             including the order ID, item name, and quantity.
+#         """
+#         return f"Order {self.order.id} - Item: {self.item.name}, Quantity: {self.quantity}"

@@ -11,9 +11,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .serializers import TokenSerializer, ItemSerializer, ProfileSerializer, OrderSerializer, OrderItemSerializer, ODOrderSerializer, ODOrderItemSerializer
+from .serializers import TokenSerializer, ItemSerializer, ProfileSerializer
 
-from .models import CustomUser, Item, UserProfile, Order, OrderItem
+from .models import CustomUser, Item, UserProfile
 
 from .utils import validate_jwt, parse_jwt
 
@@ -38,212 +38,219 @@ def get_error_string(serializer):
                 error_string += e.title()
                 break
     return error_string
+'''
+removing order features for live version
+'''
+# class StripeCheckoutView(APIView):
+#     """
+#     API View for handling Stripe checkout.
 
-class StripeCheckoutView(APIView):
-    """
-    API View for handling Stripe checkout.
+#     This view is responsible for processing Stripe checkout requests. It receives
+#     a POST request containing cart items and user information, creates a new order,
+#     generates a checkout session with Stripe, and returns the checkout URL to the client.
 
-    This view is responsible for processing Stripe checkout requests. It receives
-    a POST request containing cart items and user information, creates a new order,
-    generates a checkout session with Stripe, and returns the checkout URL to the client.
+#     Methods:
+#         post(self, request): Handles POST requests for creating a Stripe checkout session.
 
-    Methods:
-        post(self, request): Handles POST requests for creating a Stripe checkout session.
+#     Returns:
+#         JsonResponse: A JSON response containing the checkout URL.
+#         Response: A response indicating the error if something goes wrong during checkout.
 
-    Returns:
-        JsonResponse: A JSON response containing the checkout URL.
-        Response: A response indicating the error if something goes wrong during checkout.
+#     """
+#     @transaction.atomic
+#     def post(self, request):
+#         """
+#         Handle POST requests for creating a Stripe checkout session.
+#         """
+#         try:
+#             data = json.loads(request.body)
+#             validated_cart = validate_cart(data['cartItems'])
+#             if not validated_cart['valid']:
+#                 return Response({'errors': validated_cart['errors']}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-    """
-    @transaction.atomic
-    def post(self, request):
-        """
-        Handle POST requests for creating a Stripe checkout session.
-        """
-        try:
-            data = json.loads(request.body)
-            validated_cart = validate_cart(data['cartItems'])
-            if not validated_cart['valid']:
-                return Response({'errors': validated_cart['errors']}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+#             # fetching the user
+#             token = request.headers.get('Authorization')
+#             decoded_token = parse_jwt(token)
+#             email = decoded_token['email']
+#             try:
+#                 user = CustomUser.objects.get(email=email)
+#             except User.DoesNotExist:
+#                 return Response({"message": "User unidentified."}, status=status.HTTP_401_UNAUTHORIZED)
 
-            # fetching the user
-            token = request.headers.get('Authorization')
-            decoded_token = parse_jwt(token)
-            email = decoded_token['email']
-            try:
-                user = CustomUser.objects.get(email=email)
-            except User.DoesNotExist:
-                return Response({"message": "User unidentified."}, status=status.HTTP_401_UNAUTHORIZED)
+#             new_order = Order(buyer=user, payment_status='pending', delivery_address=data['address'])
+#             new_order.save()
+#             total_price = 0
+#             line_items_list = []
+#             for obj in data['cartItems']:
+#                 item = obj.get('item')
+#                 qty = obj.get('quantity')
 
-            new_order = Order(buyer=user, payment_status='pending', delivery_address=data['address'])
-            new_order.save()
-            total_price = 0
-            line_items_list = []
-            for obj in data['cartItems']:
-                item = obj.get('item')
-                qty = obj.get('quantity')
+#                 try:
+#                     db_item = Item.objects.select_for_update().get(id=item['id'])
+#                     total_price = total_price + (db_item.price * qty)
+#                     new_order.items.add(db_item, through_defaults={'quantity': qty})
+#                     new_order.save()
+#                 except Exception as e:
+#                     raise e
 
-                try:
-                    db_item = Item.objects.select_for_update().get(id=item['id'])
-                    total_price = total_price + (db_item.price * qty)
-                    new_order.items.add(db_item, through_defaults={'quantity': qty})
-                    new_order.save()
-                except Exception as e:
-                    raise e
+#                 line_items_list.append({
+#                     'price_data': {
+#                         'currency': 'usd',
+#                         'unit_amount_decimal': str(float(item['price']) * 100),
+#                         'product_data': {
+#                             'name': item['name'],
+#                             'description': item['description'],
+#                             'images': [item['image'], ],
+#                         }
+#                     },
+#                     'quantity': qty
+#                 })
+#             new_order.total_price = total_price
+#             new_order.save()
 
-                line_items_list.append({
-                    'price_data': {
-                        'currency': 'usd',
-                        'unit_amount_decimal': str(float(item['price']) * 100),
-                        'product_data': {
-                            'name': item['name'],
-                            'description': item['description'],
-                            'images': [item['image'], ],
-                        }
-                    },
-                    'quantity': qty
-                })
-            new_order.total_price = total_price
-            new_order.save()
+#             checkout_session = stripe.checkout.Session.create(
+#                 line_items=line_items_list,
+#                 payment_method_types=['card'],
+#                 mode='payment',
+#                 success_url=settings.SITE_URL + f'/order-details/{new_order.id}?success=true&session_id={{CHECKOUT_SESSION_ID}}',
+#                 cancel_url=settings.SITE_URL + f'/order-details/{new_order.id}?canceled=true',
+#             )
 
-            checkout_session = stripe.checkout.Session.create(
-                line_items=line_items_list,
-                payment_method_types=['card'],
-                mode='payment',
-                success_url=settings.SITE_URL + f'/order-details/{new_order.id}?success=true&session_id={{CHECKOUT_SESSION_ID}}',
-                cancel_url=settings.SITE_URL + f'/order-details/{new_order.id}?canceled=true',
-            )
-
-            new_order.checkout_id = checkout_session.id
-            new_order.save()
-            return JsonResponse({'url': checkout_session.url})
-        except Exception as e:
-            new_order.payment_status = 'failed'
-            order_items = OrderItem.objects.filter(order=new_order)
-            for order_item in order_items:
-                order_item.increase_item_quantity()
-            new_order.save()
-            return Response(
-                {'error': 'Something went wrong when creating stripe checkout session. Please try later.'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+#             new_order.checkout_id = checkout_session.id
+#             new_order.save()
+#             return JsonResponse({'url': checkout_session.url})
+#         except Exception as e:
+#             new_order.payment_status = 'failed'
+#             order_items = OrderItem.objects.filter(order=new_order)
+#             for order_item in order_items:
+#                 order_item.increase_item_quantity()
+#             new_order.save()
+#             return Response(
+#                 {'error': 'Something went wrong when creating stripe checkout session. Please try later.'},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+#             )
 
 
-@api_view(['GET'])
-@validate_jwt
-def get_order_details(request, id):
-    """
-    Retrieve details of an order.
+'''
+removing order features for live version
+'''
+# @api_view(['GET'])
+# @validate_jwt
+# def get_order_details(request, id):
+#     """
+#     Retrieve details of an order.
 
-    This function retrieves details of a specific order identified by its ID.
-    It retrieves the checkout session information from Stripe based on the order's
-    checkout ID, updates the order's payment status accordingly, and returns the
-    order details in JSON format.
+#     This function retrieves details of a specific order identified by its ID.
+#     It retrieves the checkout session information from Stripe based on the order's
+#     checkout ID, updates the order's payment status accordingly, and returns the
+#     order details in JSON format.
 
-    Args:
-        request (HttpRequest): The HTTP request.
-        id (int): The ID of the order to retrieve details for.
+#     Args:
+#         request (HttpRequest): The HTTP request.
+#         id (int): The ID of the order to retrieve details for.
 
-    Returns:
-        JsonResponse: A JSON response containing the details of the order.
+#     Returns:
+#         JsonResponse: A JSON response containing the details of the order.
         
-    Raises:
-        JsonResponse: If the requested order does not exist or an unexpected error occurs.
+#     Raises:
+#         JsonResponse: If the requested order does not exist or an unexpected error occurs.
 
-    """
-    if request.method == "GET":
-        # Retrieve the order_id from the GET request
-        order_id = int(id)
-        try:
-            order = Order.objects.get(id=order_id)
+#     """
+#     if request.method == "GET":
+#         # Retrieve the order_id from the GET request
+#         order_id = int(id)
+#         try:
+#             order = Order.objects.get(id=order_id)
 
-            # Retrieve the checkout_id from the order object
-            checkout_id = order.checkout_id
+#             # Retrieve the checkout_id from the order object
+#             checkout_id = order.checkout_id
 
-            # Retrieve the checkout session from Stripe
-            checkout_session = stripe.checkout.Session.retrieve(checkout_id)
+#             # Retrieve the checkout session from Stripe
+#             checkout_session = stripe.checkout.Session.retrieve(checkout_id)
 
-            # Check if the session is still open
-            if checkout_session.get("status") == "open":
-                expired_session = stripe.checkout.Session.expire(checkout_id)
-                if expired_session.get('payment_status') == 'paid':
-                    order.payment_status = 'completed'
-                else:
-                    order.payment_status = 'failed'
-                    order_items = OrderItem.objects.filter(order=order)
-                    for order_item in order_items:
-                        order_item.increase_item_quantity()
-                order.save()
-            else:
-                retrieved_session = stripe.checkout.Session.retrieve(checkout_id)
-                if retrieved_session.get('payment_status') == 'paid':
-                    order.payment_status = 'completed'
-                else:
-                    order.payment_status = 'failed'
-                order.save()
+#             # Check if the session is still open
+#             if checkout_session.get("status") == "open":
+#                 expired_session = stripe.checkout.Session.expire(checkout_id)
+#                 if expired_session.get('payment_status') == 'paid':
+#                     order.payment_status = 'completed'
+#                 else:
+#                     order.payment_status = 'failed'
+#                     order_items = OrderItem.objects.filter(order=order)
+#                     for order_item in order_items:
+#                         order_item.increase_item_quantity()
+#                 order.save()
+#             else:
+#                 retrieved_session = stripe.checkout.Session.retrieve(checkout_id)
+#                 if retrieved_session.get('payment_status') == 'paid':
+#                     order.payment_status = 'completed'
+#                 else:
+#                     order.payment_status = 'failed'
+#                 order.save()
 
-            order_serializer = ODOrderSerializer(order)
+#             order_serializer = ODOrderSerializer(order)
 
-            response_data = {
-                "order": order_serializer.data,
-            }
-            return JsonResponse(response_data)
+#             response_data = {
+#                 "order": order_serializer.data,
+#             }
+#             return JsonResponse(response_data)
 
-        except Order.DoesNotExist:
-            return JsonResponse({"error": "Order does not exist."}, status=404)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
-    else:
-        return JsonResponse({"error": "Only GET requests are allowed."}, status=405)
+#         except Order.DoesNotExist:
+#             return JsonResponse({"error": "Order does not exist."}, status=404)
+#         except Exception as e:
+#             return JsonResponse({"error": str(e)}, status=400)
+#     else:
+#         return JsonResponse({"error": "Only GET requests are allowed."}, status=405)
 
+'''
+removing order features for live version
+'''
+# @transaction.atomic
+# def validate_cart(cart_items):
+#     """
+#     Validate the items in the shopping cart.
 
-@transaction.atomic
-def validate_cart(cart_items):
-    """
-    Validate the items in the shopping cart.
+#     This function checks the availability of items in the shopping cart and updates
+#     the quantities of items in the database accordingly.
 
-    This function checks the availability of items in the shopping cart and updates
-    the quantities of items in the database accordingly.
+#     Args:
+#         cart_items: A list of dictionaries representing items in the cart.
 
-    Args:
-        cart_items: A list of dictionaries representing items in the cart.
+#     Returns:
+#         dict: A dictionary indicating whether the cart is valid or not, and any
+#             errors encountered during validation.
 
-    Returns:
-        dict: A dictionary indicating whether the cart is valid or not, and any
-            errors encountered during validation.
+#     """
+#     result = {"valid": True, "errors": []}
+#     if len(cart_items) == 0:
+#         result['errors'].append('No items in cart.')
+#         result['valid'] = False
+#         return result
+#     for object in cart_items:
+#         item = object.get('item')
 
-    """
-    result = {"valid": True, "errors": []}
-    if len(cart_items) == 0:
-        result['errors'].append('No items in cart.')
-        result['valid'] = False
-        return result
-    for object in cart_items:
-        item = object.get('item')
+#         try:
+#             db_item = Item.objects.select_for_update().get(id=item['id'])
 
-        try:
-            db_item = Item.objects.select_for_update().get(id=item['id'])
+#             if db_item.quantity >= object.get('quantity'):
+#                 db_item.quantity = db_item.quantity - object.get('quantity')
+#                 db_item.save()
+#                 if db_item.quantity == 0:
+#                     db_item.current_status = 'deleted'
+#                     db_item.save()
+#             else:
+#                 result['errors'].append(f'Insufficient Quantity for item {db_item.name}')
+#                 result['valid'] = False
+#                 return result
 
-            if db_item.quantity >= object.get('quantity'):
-                db_item.quantity = db_item.quantity - object.get('quantity')
-                db_item.save()
-                if db_item.quantity == 0:
-                    db_item.current_status = 'deleted'
-                    db_item.save()
-            else:
-                result['errors'].append(f'Insufficient Quantity for item {db_item.name}')
-                result['valid'] = False
-                return result
+#         except Item.DoesNotExist:
+#             result['errors'].append(f'Item {db_item.name} does not exist.')
+#             result['valid'] = False
+#             return result
 
-        except Item.DoesNotExist:
-            result['errors'].append(f'Item {db_item.name} does not exist.')
-            result['valid'] = False
-            return result
-
-        except Exception as e:
-            raise e
+#         except Exception as e:
+#             raise e
         
-    return result
+#     return result
 
 @ensure_csrf_cookie
 @csrf_protect
@@ -432,25 +439,30 @@ def get_profile(request):
             response_data['items'].append(data_item)
     except:
         return Response({"message": "My listings not found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    try:
-        my_orders = Order.objects.filter(buyer__email = email).order_by("order_date").reverse()
-        response_data['orders'] = []
-        for order in my_orders:
-            response_data['orders'].append(OrderSerializer(order).data)
-    except:
-        return Response({"message": "My orders not found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    try:
-        #TODO: order by order date?
-        my_items_order = OrderItem.objects.filter(item__user__email = email).order_by('order__order_date').reverse()
-        response_data['items_order'] = []
-        for items_order in my_items_order:
-            response_data['items_order'].append(OrderItemSerializer(items_order).data)
-    except:
-        return Response({"message": "My orders for listings not found."}, status=status.HTTP_404_NOT_FOUND)
-
+    '''
+    removing order features for live version
+    '''
+    # try:
+    #     my_orders = Order.objects.filter(buyer__email = email).order_by("order_date").reverse()
+    #     response_data['orders'] = []
+    #     for order in my_orders:
+    #         response_data['orders'].append(OrderSerializer(order).data)
+    # except:
+    #     return Response({"message": "My orders not found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # try:
+    #     #TODO: order by order date?
+    #     my_items_order = OrderItem.objects.filter(item__user__email = email).order_by('order__order_date').reverse()
+    #     response_data['items_order'] = []
+    #     for items_order in my_items_order:
+    #         response_data['items_order'].append(OrderItemSerializer(items_order).data)
+    # except:
+    #     return Response({"message": "My orders for listings not found."}, status=status.HTTP_404_NOT_FOUND)
     return Response(response_data, status=status.HTTP_200_OK)
+
+
+    
 
     
 @api_view(['GET'])
@@ -503,64 +515,68 @@ def get_listings(request):
             })
     return Response(serialized_data_with_ids, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-@validate_jwt
-def get_order(request, id):
-    """
-    Retrieve order details.
 
-    This function retrieves the details of a specific order identified by its ID.
-    It returns the order details along with buyer and seller information.
+'''
+removing order features for live version
+'''
+# @api_view(['GET'])
+# @validate_jwt
+# def get_order(request, id):
+#     """
+#     Retrieve order details.
 
-    Args:
-        request (HttpRequest): The HTTP request.
-        id (int): The ID of the order to retrieve details for.
+#     This function retrieves the details of a specific order identified by its ID.
+#     It returns the order details along with buyer and seller information.
 
-    Returns:
-        Response: A JSON response containing the details of the order, including
-            buyer and seller information.
+#     Args:
+#         request (HttpRequest): The HTTP request.
+#         id (int): The ID of the order to retrieve details for.
 
-    """
-    if request.method == "GET":
-        response_data = {}
-        try:
-            orders = Order.objects.filter(id = id)
-            if len(orders) == 0:
-                return Response({"message": "no order found"}, status=status.HTTP_404_NOT_FOUND)
-            order_data = OrderSerializer(orders[0]).data
-        except:
+#     Returns:
+#         Response: A JSON response containing the details of the order, including
+#             buyer and seller information.
 
-            return Response({"message": "Data could not be retrived"}, status=status.HTTP_404_NOT_FOUND)
-        try:
-            buyer_email = order_data['owner']
-            buyer_user = User.objects.get(email = buyer_email)
-            buyer_profile = UserProfile.objects.get(user= buyer_user)
-            serialized_profile = ProfileSerializer(buyer_profile).data 
-            response_data['buyer'] = {}
-            response_data['buyer']['name'] = buyer_user.name
-            response_data['buyer']['email_contact'] = serialized_profile['email_contact']
-            response_data['buyer']['mobile'] = serialized_profile['mobile']
-        except:
-            return Response({"message": "Data could not be retrived"}, status=status.HTTP_404_NOT_FOUND) 
+#     """
+#     if request.method == "GET":
+#         response_data = {}
+#         try:
+#             orders = Order.objects.filter(id = id)
+#             if len(orders) == 0:
+#                 return Response({"message": "no order found"}, status=status.HTTP_404_NOT_FOUND)
+#             order_data = OrderSerializer(orders[0]).data
+#         except:
 
-        try:
-            for purchased_item in order_data["items"]:
-                seller_email = purchased_item['item']['owner']
-                seller_user = User.objects.get(email = seller_email)
-                seller_profile = UserProfile.objects.get(user = seller_user)
-                serialized_profile = ProfileSerializer(seller_profile).data
-                purchased_item["seller"] = {}
-                purchased_item['seller']['name'] = seller_user.name
-                purchased_item['seller']['email_contact'] = serialized_profile['email_contact']
-                purchased_item['seller']['mobile'] = serialized_profile['mobile']
-        except:
-            return Response({"message": "Data could not be retrived"}, status=status.HTTP_404_NOT_FOUND) 
+#             return Response({"message": "Data could not be retrived"}, status=status.HTTP_404_NOT_FOUND)
+#         try:
+#             buyer_email = order_data['owner']
+#             buyer_user = User.objects.get(email = buyer_email)
+#             buyer_profile = UserProfile.objects.get(user= buyer_user)
+#             serialized_profile = ProfileSerializer(buyer_profile).data 
+#             response_data['buyer'] = {}
+#             response_data['buyer']['name'] = buyer_user.name
+#             response_data['buyer']['email_contact'] = serialized_profile['email_contact']
+#             response_data['buyer']['mobile'] = serialized_profile['mobile']
+#         except:
+#             return Response({"message": "Data could not be retrived"}, status=status.HTTP_404_NOT_FOUND) 
+
+#         try:
+#             for purchased_item in order_data["items"]:
+#                 seller_email = purchased_item['item']['owner']
+#                 seller_user = User.objects.get(email = seller_email)
+#                 seller_profile = UserProfile.objects.get(user = seller_user)
+#                 serialized_profile = ProfileSerializer(seller_profile).data
+#                 purchased_item["seller"] = {}
+#                 purchased_item['seller']['name'] = seller_user.name
+#                 purchased_item['seller']['email_contact'] = serialized_profile['email_contact']
+#                 purchased_item['seller']['mobile'] = serialized_profile['mobile']
+#         except:
+#             return Response({"message": "Data could not be retrived"}, status=status.HTTP_404_NOT_FOUND) 
 
 
-        response_data.update(order_data)
-        return Response(response_data, status=status.HTTP_200_OK)
+#         response_data.update(order_data)
+#         return Response(response_data, status=status.HTTP_200_OK)
 
-    return Response({"message": "invalid operation"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+#     return Response({"message": "invalid operation"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @ensure_csrf_cookie
 @csrf_protect
