@@ -24,7 +24,9 @@ import '@fontsource/inter';
 
 const pages = ['Home', 'About Us', 'Products'];
 const settingsLogIn = ['Log In'];
-const settings = ['Profile', 'My Orders', 'Sell', 'Logout'];
+/* removing order features for live version */
+// const settings = ['Profile', 'My Orders', 'Sell', 'Logout'];
+const settings = ['Profile', 'Sell', 'Logout'];
 
 const showShoppingCart = false;
 
@@ -64,8 +66,9 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
     setAnchorElUser(null);
     if (setting === 'Profile') {
       navigateTo('/my-profile');
-    } else if (setting === 'My Orders') {
-      navigateTo('/my-profile', { state: { active: 'Purchased Orders' } });
+    /* removing order features for live version */
+    // } else if (setting === 'My Orders') {
+    //   navigateTo('/my-profile', { state: { active: 'Purchased Orders' } });
     } else if (setting === 'Sell') {
       navigateTo('/add-item');
     } else if (setting === 'Logout') {

@@ -21,8 +21,8 @@ import PurchasesList from '../components/PurchasesList.jsx';
 
 const profile_tabs = [
   'Listings',
-  'Items sold',
-  'Purchased Orders',
+  // 'Items sold',
+  // 'Purchased Orders',
   'Account Settings',
 ];
 
@@ -179,18 +179,20 @@ const ProfilePage = (props) => {
                     />
                   </Box>
                 );
-              } else if (active === profile_tabs[1]) {
-                return (
-                  <Box sx={{ minHeight: '50vh' }}>
-                    <OrderList order_items={order_items} />
-                  </Box>
-                );
-              } else if (active === profile_tabs[2]) {
-                return (
-                  <Box sx={{ minHeight: '50vh' }}>
-                    <PurchasesList purchases={my_orders} withUpdate={false} />
-                  </Box>
-                );
+
+              /* removing order features for live version */
+              // } else if (active === profile_tabs[1]) {
+              //   return (
+              //     <Box sx={{ minHeight: '50vh' }}>
+              //       <OrderList order_items={order_items} />
+              //     </Box>
+              //   );
+              // } else if (active === profile_tabs[2]) {
+              //   return (
+              //     <Box sx={{ minHeight: '50vh' }}>
+              //       <PurchasesList purchases={my_orders} withUpdate={false} />
+              //     </Box>
+              //   );
               } else {
                 return (
                   <Box sx={{ minHeight: '50vh' }}>
