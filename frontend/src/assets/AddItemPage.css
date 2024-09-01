@@ -1,7 +1,7 @@
 .add-item-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex; */
+  justify-content: left;
+  align-items: left;
   height: 100vh;
 }
 
@@ -26,4 +26,14 @@
 
 .page-container {
   margin-bottom: '20px';
+  justify-content: left;
+  align-items: left;
+}
+
+.page-title-text {
+  margin-bottom: '20px';
+  justify-content: left;
+  align-items: left;
+  justify-self: left;
+  align-content: flex-start;
 }
