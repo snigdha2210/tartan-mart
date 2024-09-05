@@ -25,10 +25,10 @@ urlpatterns = [
     
     # Listing APIs
     path('addListing/', views.add_listing, name='add_listing'),
-    path('updateListing/', views.update_listing, name='update_listing'),
-    path('listing/<int:id>', views.get_listing, name='get_listing'),
+    path('updateListing/<int:listing_id>/', views.update_listing, name='update_listing'),
+    path('listing/<int:listing_id>/', views.get_listing, name='get_listing'),
     path('listing/', views.get_listings, name='get_listings'),
-    path('deleteListing/', views.delete_listing, name='delete_listing'),
+    path('deleteListing/<int:listing_id>/', views.delete_listing, name='delete_listing'),
 
     # Item APIs
     path('store/', views.get_items, name='get_items'),

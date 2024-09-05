@@ -72,15 +72,15 @@ def add_listing(request):
 @api_view(['PUT'])
 @transaction.atomic
 @validate_jwt
-def update_listing(request):
-    return listings_update_listing(request)
+def update_listing(request, listing_id):
+    return listings_update_listing(request, listing_id)
 
 @ensure_csrf_cookie
 @api_view(['GET'])
 @transaction.atomic
 @validate_jwt
-def get_listing(request):
-    return listings_get_listing(request)
+def get_listing(request, listing_id):
+    return listings_get_listing(request, listing_id)
 
 @ensure_csrf_cookie
 @api_view(['GET'])
@@ -93,8 +93,8 @@ def get_listings(request):
 @api_view(['DELETE'])
 @transaction.atomic
 @validate_jwt
-def delete_listing(request):
-    return listings_delete_listing(request)
+def delete_listing(request, listing_id):
+    return listings_delete_listing(request, listing_id)
 
 
 # Item APIs

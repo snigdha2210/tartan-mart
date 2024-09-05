@@ -3,11 +3,17 @@ import json
 
 from rest_framework.response import Response
 from rest_framework import status
-from datetime import datetime
 from functools import wraps
 
 import json
 import base64
+
+from django.contrib.auth import get_user_model
+
+from rest_framework.response import Response
+from rest_framework import status
+
+User = get_user_model()
 
 def parse_jwt(token):
     try:
@@ -62,3 +68,14 @@ def get_error_string(serializer):
                 error_string += e.title()
                 break
     return error_string
+
+def get_authenticated_user(request):
+    token = request.headers.get('Authorization')
+    decoded_token = parse_jwt(token)
+    email = decoded_token.get('email')
+    
+    try:
+        user = User.objects.get(email=email)
+        return user
+    except User.DoesNotExist:
+        return None
