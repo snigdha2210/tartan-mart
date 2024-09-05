@@ -133,16 +133,7 @@ class Item(models.Model):
     name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=False, null=False)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
-    listed_date = models.DateTimeField(default=timezone.now)
-    sold_date = models.DateTimeField(null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
-    delivery_or_pickup = models.CharField(max_length=20, choices=[('delivery', 'Delivery'), ('pickup', 'Pickup')], default='pickup')
-    CURRENT_STATUS_CHOICES = (
-        ('listed', 'Listed'),
-        ('delisted', 'Delisted'),
-        ('deleted', 'Deleted'),
-    )
-    current_status = models.CharField(max_length=20, choices=CURRENT_STATUS_CHOICES, default='listed')
     CATEGORY_CHOICES = (
         ('electronics', 'Electronics'),
         ('furniture', 'Furniture'),
@@ -153,10 +144,21 @@ class Item(models.Model):
         ('none', 'None')
     )
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, default='none')
-    delivery_time = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(30)])
-    pickup_address = models.CharField(max_length=ADDRESS_LIMIT, null=True, blank=True)
+
+    listed_date = models.DateTimeField(default=timezone.now)
+    sold_date = models.DateTimeField(null=True, blank=True)
+    
+    CURRENT_STATUS_CHOICES = (
+        ('listed', 'Listed'),
+        ('delisted', 'Delisted'),
+        ('deleted', 'Deleted'),
+    )
+    current_status = models.CharField(max_length=20, choices=CURRENT_STATUS_CHOICES, default='listed')
+
     image = models.ImageField(upload_to="images/", blank=True, null=True, default=DEFAULT_ITEM_IMAGE)
-    imageb64 = models.CharField(max_length=9999, null=True, blank=True)
+    image_b64 = models.CharField(max_length=9999999999, null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
+    image_name = models.CharField(max_length=9999, null=True, blank=True)
+    
     def __str__(self):
         return f'Item - {self.name}, Qty - {self.quantity}'

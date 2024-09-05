@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Item, Listing, UserProfile
+import base64
+import uuid
+from django.core.files.base import ContentFile
 
 class TokenSerializer(serializers.Serializer):
     """ JWT Token Serializer """
@@ -15,7 +18,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'name', 'description', 'price', 'quantity', 'category', 'image']
+        fields = ['id', 'name', 'description', 'price', 'quantity', 'category', 'image', 'image_b64', 'image_name']
 
 class ListingSerializer(serializers.ModelSerializer):
     listing_item = ItemSerializer(many=True)
@@ -23,12 +26,43 @@ class ListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Listing
         fields = ['id', 'name', 'description', 'delivery_or_pickup', 'delivery_time', 'pickup_address', 'listing_item']
-
+    
     def create(self, validated_data):
         items_data = validated_data.pop('listing_item')
         listing = Listing.objects.create(**validated_data)
         for item_data in items_data:
+            print('item data:', item_data)
+            imageb64string = item_data['image_b64']
+            file_name = item_data['image_name']
+            image_file = save_base64_image(imageb64string, file_name)
+            item_data['image'] = image_file
             Item.objects.create(listing=listing, **item_data)
         return listing
+    
+
+def save_base64_image(base64_string, file_name):
+    """
+    This function saves a base64 encoded string as an image to an Item model instance.
+
+    :param base64_string: The base64 encoded image string
+    :param item_name: The name of the item to associate the image with
+    :return: The created item with the saved image
+    """
+    format, imgstr = base64_string.split(';base64,')  # Split the base64 string
+    ext = format.split('/')[-1]  # Extract the file extension (e.g., jpg, png)
+    
+    # Create a file name using UUID to avoid name collisions
+    # file_name = f"{file_name}"
+
+    # Decode the base64 string into binary data
+    image_data = ContentFile(base64.b64decode(imgstr), name=file_name)
+
+    # Create the Item instance and associate the image
+    # item = Item.objects.create(name=item_name)
+    # item.image.save(file_name, image_data, save=True)  # Save the image to the ImageField
+
+    return image_data
+    
+
 
 
