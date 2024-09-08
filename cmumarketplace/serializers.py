@@ -39,6 +39,46 @@ class ListingSerializer(serializers.ModelSerializer):
             Item.objects.create(listing=listing, **item_data)
         return listing
     
+    def update(self, instance, validated_data):
+        # Update the Listing fields
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.delivery_or_pickup = validated_data.get('delivery_or_pickup', instance.delivery_or_pickup)
+        instance.delivery_time = validated_data.get('delivery_time', instance.delivery_time)
+        instance.pickup_address = validated_data.get('pickup_address', instance.pickup_address)
+        instance.save()
+
+        # Handle updating nested Item instances
+        items_data = validated_data.pop('listing_item')
+        existing_items = {item.id: item for item in instance.listing_item.all()}
+
+        for item_data in items_data:
+            item_id = item_data.get('id')
+
+            if item_id in existing_items:
+                # If the item exists, update it
+                item = existing_items.pop(item_id)
+                imageb64string = item_data.get('image_b64')
+                file_name = item_data.get('image_name')
+                if imageb64string and file_name:
+                    image_file = save_base64_image(imageb64string, file_name)
+                    item_data['image'] = image_file
+                ItemSerializer().update(item, item_data)
+            else:
+                # If the item is new, create it
+                imageb64string = item_data.get('image_b64')
+                file_name = item_data.get('image_name')
+                if imageb64string and file_name:
+                    image_file = save_base64_image(imageb64string, file_name)
+                    item_data['image'] = image_file
+                Item.objects.create(listing=instance, **item_data)
+
+        # Delete any items that were not included in the update
+        for item in existing_items.values():
+            item.delete()
+
+        return instance
+    
 
 def save_base64_image(base64_string, file_name):
     """
