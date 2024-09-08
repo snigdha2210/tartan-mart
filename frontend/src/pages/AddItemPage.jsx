@@ -14,7 +14,6 @@ import {
   Radio,
   FormControlLabel,
   ListItemText,
-  FormLabel,
   Alert,
   Card,
   Grid,
@@ -27,13 +26,11 @@ import { useTheme } from '@emotion/react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import { categories_tabs, IMAGE_SIZE_LIMIT } from '../constants/constants.jsx';
+import { categories_tabs } from '../constants/constants.jsx';
 import API_ENDPOINTS from '../constants/apiEndpoints';
-import { postRequest } from '../util/api';
-import { OneK } from '@mui/icons-material';
+import { deleteRequest, postRequest } from '../util/api';
 
 import { styled } from '@mui/material/styles';
-// import Button from '@mui/material/Button' ;
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const VisuallyHiddenInput = styled('input')({
@@ -48,8 +45,6 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const delivery_pickup_tabs = ['Delivery', 'Pickup'];
-
 const AddItemPage = () => {
   const theme = useTheme();
   const [itemName, setItemName] = useState('');
@@ -60,7 +55,7 @@ const AddItemPage = () => {
   const [deliveryTime, setDeliveryTime] = useState('');
   const [image, setImage] = useState(null);
 
-  const [selectedFiles, setSelectedFiles] = useState(null);
+  // const [selectedFiles, setSelectedFiles] = useState(null);
   const [imagePreviews, setImagePreviews] = useState([]);
 
   const myref = useRef();
@@ -81,9 +76,7 @@ const AddItemPage = () => {
 
   const [previewUrl, setPreviewUrl] = useState(null)
 
-  const [imageDetails, setImageDetails] = useState([]); // New state for image details (name, price, quantity)
-
-  // const [imageStatus, setImageStatus] = useState([]); // Track status of each image
+  // const [imageDetails, setImageDetails] = useState([]); // New state for image details (name, price, quantity)
 
   const [items, setItems] = useState([]);
 
@@ -107,57 +100,6 @@ const AddItemPage = () => {
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
-
-
-  // function validateFormData(data) {
-  //   if (data.get('name') === '') {
-  //     throw new Error('No name set');
-  //   }
-  //   if (data.get('description') === '') {
-  //     throw new Error('No description set');
-  //   }
-
-  //   if (data.get('description').length < 30) {
-  //     throw new Error('Small description. Be more creative!');
-  //   }
-
-  //   if (data.get('price') === '' || data.get('price') < 0) {
-  //     throw new Error('Invalid price');
-  //   }
-
-  //   if (data.get('quantity') === '' || data.get('quantity') <= 0) {
-  //     throw new Error('Invalid quantity');
-  //   }
-
-  //   if (data.get('category') === '') {
-  //     throw new Error('No category provided');
-  //   }
-
-  //   if (data.get('delivery_or_pickup') === '') {
-  //     throw new Error('Delivery or pickup not set');
-  //   }
-  //   if (
-  //     data.get('delivery_or_pickup') === 'delivery' &&
-  //     (data.get('delivery_time') === null || data.get('delivery_time') === '')
-  //   ) {
-  //     throw new Error('Set the estimated delivery time in days');
-  //   }
-
-  //   if (
-  //     data.get('delivery_or_pickup') === 'pickup' &&
-  //     data['pickup_address'] === ''
-  //   ) {
-  //     throw new Error('Include the pickup address');
-  //   }
-  //   if (data.get('category') === '') {
-  //     throw new Error('No category selected');
-  //   }
-
-  //   if (!image || image.size <= 0 || image.size >= IMAGE_SIZE_LIMIT) {
-  //     throw new Error('Insert a valid image (likely image size issue)');
-  //   }
-  //   return;
-  // }
 
   const validateFormData = () => {
     if (!itemName) throw new Error('No name set');
@@ -197,69 +139,84 @@ const AddItemPage = () => {
     return '';
   }
 
-  // const handleFormSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   const formData = new FormData();
-
-  //   formData.append('name', itemName);
-  //   formData.append('description', description);
-  //   formData.append('price', price);
-  //   formData.append('quantity', quantity);
-  //   formData.append('category', category.toLowerCase());
-  //   formData.append('delivery_or_pickup', checkedDeliveryPickup);
-  //   formData.append('image', image);
-  //   if (checkedDeliveryPickup === 'delivery') {
-  //     formData.append('delivery_time', deliveryTime);
-  //   } else if (checkedDeliveryPickup === 'pickup') {
-  //     formData.append('pickup_address', pickupAddress);
-  //   }
-
-  //   try {
-  //     validateFormData(formData);
-  //   } catch (e) {
-  //     setErrorDisplay('show');
-  //     setErrorMessage(e.toString());
-  //     //close modal and clear form
-  //     setOpenSubmit(false);
-  //     return;
-  //   }
-  //   // Call the function to make the POST request with the JSON body
-  //   handlePostRequest(formData);
-
-  //   //close modal and clear form
-  //   setOpenSubmit(false);
-  // };
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      console.log("TRYING TO SUBMIT");
       validateFormData();
-
-      const formData = new FormData();
-      formData.append('name', itemName);
-      formData.append('description', description);
-      formData.append('delivery_or_pickup', deliveryPickupOption);
-
+      const listingData = {
+        "name": itemName,
+        "description": description,
+        "delivery_or_pickup": deliveryPickupOption,
+      };
       if (deliveryPickupOption === 'delivery') {
-        formData.append('delivery_time', deliveryTime);
+        listingData['delivery'] = deliveryTime
       } else {
-        formData.append('pickup_address', pickupAddress);
+        listingData['pickup_address'] = pickupAddress
       }
 
-      items.forEach((item, index) => {
-        formData.append(`items[${index}][image]`, item.image);
-        formData.append(`items[${index}][price]`, item.price);
-        formData.append(`items[${index}][quantity]`, item.quantity);
-        formData.append(`items[${index}][category]`, item.category.toLowerCase());
-        formData.append(`items[${index}][description]`, item.description);
+      //   const newItem = {
+      //           imageName: item.image.name,
+      //           imageBase64: reader.result,
+      //           price: item.price,
+      //           quantity: item.quantity,
+      //           category: item.category,
+      //           description: item.description
+      //         };
+      // const formData = new FormData();
+      // formData.append('name', itemName);
+      // formData.append('description', description);
+      // formData.append('delivery_or_pickup', deliveryPickupOption);
+
+      // if (deliveryPickupOption === 'delivery') {
+      //   formData.append('delivery_time', deliveryTime);
+      // } else {
+      //   formData.append('pickup_address', pickupAddress);
+      // }
+      console.log("TRYING TO SUBMIT 2");
+
+      // Function to convert file to Base64 and transform the object
+      function convertToNewObject(items) {
+        const promises = items.map(item => {
+          const reader = new FileReader();
+          
+          return new Promise((resolve) => {
+            reader.onloadend = () => {
+              // Creating a new object with the required structure
+              const newItem = {
+                name: item.name,
+                image_name: item.image.name,
+                image_b64: reader.result,
+                price: item.price,
+                quantity: item.quantity,
+                category: item.category,
+                description: item.description
+              };
+              resolve(newItem);
+            };
+            reader.readAsDataURL(item.image);
+          });
+        });
+
+        return Promise.all(promises);
+      }
+
+      convertToNewObject(items).then(async newItems => {
+        // console.log(newItems);
+        listingData['listing_item'] = newItems
+        // formData.append("items", JSON.stringify(newItems));
+        console.log("LISTING:", JSON.stringify(listingData));
+        await handlePostRequest2(listingData);
+        // clearForm();
+        // Now you can use the newItems array with the desired structure
       });
+      // const itemsJson = JSON.stringify(items);
+      // formData.append('items', itemsJson);
+
 
       // Replace with your POST request function
-      await handlePostRequest2(formData);
-
-      clearForm();
+      
     } catch (error) {
       setErrorDisplay('show');
       setErrorMessage(error.message);
@@ -294,7 +251,7 @@ const AddItemPage = () => {
 
   const handlePostRequest2 = async (body) => {
     try {
-      const response = await postRequest(API_ENDPOINTS.addListing, body, false); // 'application/x-www-form-urlencoded'
+      const response = await postRequest(API_ENDPOINTS.addListing, body, 'application/json'); // 'application/x-www-form-urlencoded'
       if (response) {
         setErrorDisplay('none');
       }
@@ -313,11 +270,6 @@ const AddItemPage = () => {
     return state.auth;
   });
 
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-  //   setImage(file);
-  // };
-
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
     const newItems = files.map((file) => ({
@@ -332,25 +284,8 @@ const AddItemPage = () => {
 
     const newImagePreviews = files.map((file) => URL.createObjectURL(file));
     setImagePreviews([...imagePreviews, ...newImagePreviews]);
-
-    // const newImageStatus = files.map(() => ({
-    //   status: index === 0 ? 'new' : 'pending', // First image is 'new', others are 'pending'
-    // }));
-    // setImageStatus([...imageStatus, ...newImageStatus]);
   };
 
-  // const clearForm = () => {
-  //   setOpenDelete(false);
-  //   setItemName('');
-  //   setDescription('');
-  //   setPrice('');
-  //   setQuantity('');
-  //   setCategory('');
-  //   setImage(null);
-  //   myref.current.value = '';
-  //   setDeliveryTime('');
-  //   setDeliveryPickupOption('');
-  // };
 
   const clearForm = () => {
     setItemName('');
@@ -363,6 +298,7 @@ const AddItemPage = () => {
     // setImageStatus([]);
     setErrorDisplay('none');
     setErrorMessage('');
+    setOpenSubmit(false);
   };
 
   const handleDelete = (e) => {
@@ -371,40 +307,6 @@ const AddItemPage = () => {
     setErrorMessage('');
     setErrorDisplay('none');
   };
-
-
-  // const selectFiles = (event) => {
-  //   let images = [];
-
-  //   for (let i = 0; i < event.target.files.length; i++) {
-  //     images.push(URL.createObjectURL(event.target.files[i]));
-  //   }
-
-  //   setSelectedFiles(event.target.files);
-  //   setImagePreviews(images);
-  // };
-  // const selectFiles = (event) => {
-  //   let images = [];
-  //   const files = Array.from(event.target.files);
-
-  //   files.forEach((file) => {
-  //     images.push(URL.createObjectURL(file));
-  //   });
-
-  //   // Set both previews and the selected files
-  //   setImagePreviews(images);
-  //   setSelectedFiles(files);
-
-  //   // Create a placeholder object for each image's details (name, price, quantity)
-  //   const details = files.map(() => ({ name: '', price: '', quantity: '' }));
-  //   setImageDetails(details);
-  // };
-
-  // const handleImageDetailsChange = (index, field, value) => {
-  //   const updatedDetails = [...imageDetails];
-  //   updatedDetails[index][field] = value;
-  //   setImageDetails(updatedDetails);
-  // };
 
   const handleImageDetailsChange = (index, field, value) => {
     const updatedItems = items.map((item, idx) =>
@@ -776,6 +678,14 @@ const AddItemPage = () => {
                       />
                       <TextField
                             fullWidth
+                            label='Item Name'
+                            margin='normal'
+                            onChange={(e) =>
+                              handleImageDetailsChange(index, 'name', e.target.value)
+                            }
+                          />
+                      <TextField
+                            fullWidth
                             label='Image Description'
                             margin='normal'
                             onChange={(e) =>
@@ -807,7 +717,11 @@ const AddItemPage = () => {
                             // id='multiple-checkbox2'
                             input={<OutlinedInput label='Category' />}
                             value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            onChange={(e) => {
+                                setCategory(e.target.value);
+                                handleImageDetailsChange(index, 'category', e.target.value.toLowerCase());
+                              }
+                            }
                           >
                             {categories_tabs.map((name) => (
                               <MenuItem key={name} value={name}>
