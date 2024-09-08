@@ -12,7 +12,7 @@ def validate_token_details(response_json: requests.Response):
         return False
     if response_json['iss'] not in ['https://accounts.google.com', 'accounts.google.com']:
         return False
-    if response_json['hd'] != 'andrew.cmu.edu':
+    if response_json['hd'] not in ['andrew.cmu.edu', 'cmu.edu', 'alumni.cmu.edu', 'cs.cmu.edu', 'tepper.cmu.edu']:
         return False
     if ("email" not in response_json) or ("name") not in response_json:
         return False

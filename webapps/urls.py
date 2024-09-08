@@ -37,18 +37,33 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    # path('setcsrfcookie/', views.set_csrf_cookie, name='set-csrf-cookie'),
+    # Util APIs
     path('token/', views.validate_google_oauth_token, name='validate-token'),
     path('healthcheck/', views.health_check, name='health-check'),
-    path('addItem/', views.add_item, name='add_item'),
-    path('listings/item/<int:id>/', views.get_item, name='get_item'),
-    path('listings/', views.get_listings, name='get_listings'),
+    
+    # Listing APIs
+    path('addListing/', views.add_listing, name='add_listing'),
+    path('updateListing/<int:listing_id>/', views.update_listing, name='update_listing'),
+    path('listing/<int:listing_id>/', views.get_listing, name='get_listing'),
+    path('listing/', views.get_listings, name='get_listings'),
+    path('deleteListing/<int:listing_id>/', views.delete_listing, name='delete_listing'),
+
+    # Item APIs
+    path('store/', views.get_items, name='get_items'),
+    path('store/item/<int:id>/', views.get_item, name='get_item'),
+    
+    # Profile APIs
     path('getProfile/', views.get_profile, name='get_profile'),
     path('updateProfile/', views.update_profile, name='update_profile'),
-    path('api/stripe/create-checkout-session', views.StripeCheckoutView.as_view()),
-    path('getOrderDetails/<int:id>/', views.get_order_details, name='get-order-details'),
-    path('getOrder/<int:id>/', views.get_order, name= "get_order"),
-    path('updateItemStatus/<int:id>/', views.update_item_status, name="update_item"),
+
+    # path('updateItemStatus/<int:id>/', views.update_item_status, name="update_item"),
+
+    # path('addItem/', views.add_item, name='add_item'),
+    # removing order features for live version
+    # path('api/stripe/create-checkout-session', views.StripeCheckoutView.as_view()),
+    # path('getOrderDetails/<int:id>/', views.get_order_details, name='get-order-details'),
+    # path('getOrder/<int:id>/', views.get_order, name= "get_order"),
+    
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

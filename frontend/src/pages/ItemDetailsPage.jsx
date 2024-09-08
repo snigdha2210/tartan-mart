@@ -59,9 +59,10 @@ const ItemDetailsPage = () => {
     return state.auth;
   });
 
-  const { status } = useSelector((state) => {
-    return state.cart;
-  });
+  {/* removing order features for live version */}
+  // const { status } = useSelector((state) => {
+  //   return state.cart;
+  // });
 
   const dispatch = useDispatch();
 
@@ -146,7 +147,7 @@ const ItemDetailsPage = () => {
               <Typography paragraph>
                 <FormattedDate date={item.listed_date} />
               </Typography>
-              {/* TODO: Uncomment the below 4 lines after testing */}
+              {/* TODO: Uncomment the below 4 lines after testing - Owner cannot purchase their own item */}
               {/* {(() => {
                 if (email && item.owner !== email) {
                   return ( */}
@@ -160,6 +161,7 @@ const ItemDetailsPage = () => {
                       style={{
                         color: theme.primary.red,
                         borderColor: theme.primary.red,
+                        display: 'none' // Hide the Add to cart button
                       }}
                       className='add-to-cart'
                       onClick={addItemToCart}
@@ -190,14 +192,15 @@ const ItemDetailsPage = () => {
           </CardContent>
         </Card>
       </div>{' '}
-      <Snackbar
+      {/* removing order features for live version */}
+      {/* <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
         message={
           status === 'updated' ? 'Item added to cart!' : 'Item already in cart!'
         }
-      />
+      /> */}
       <Footer />
     </>
   );
