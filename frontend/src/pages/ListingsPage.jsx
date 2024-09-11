@@ -9,21 +9,19 @@ import {
   MenuItem,
   Checkbox,
   ListItemText,
-  IconButton,
+  Button,
   TextField,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import ItemCard from '../components/ItemCard';
 import Loader from '../components/Loader';
 import '../assets/ListingsPage.css';
 import Footer from '../components/Footer.jsx';
 import { useTheme } from '@emotion/react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import NavBar from '../components/Nav.jsx';
 import { categories_tabs } from '../constants/constants.jsx';
 import { getRequestAuthed } from '../util/api';
 import API_ENDPOINTS from '../constants/apiEndpoints';
-import { useDispatch } from 'react-redux';
 import { updateItems } from '../store/actions/actions';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,7 +99,10 @@ const ListingsPage = (props) => {
     await handleSearch();
   };
 
-
+  const handleClearFilter = () => {
+    setCategoryFilter([]);
+    setSearchStateVar('');
+  };
 
   const handleCategoryChange = (event) => {
     setCategoryFilter(event.target.value);
@@ -124,7 +125,7 @@ const ListingsPage = (props) => {
       />
       <div className='listings-page'>
         <div className='listings-page-header'>
-          <div className='page-title-text'>Browse...</div>
+          <div className='page-title-text'>Browse Our Products</div>
           <div className='filters-parent'>
             <div className='filter-multi-select'>
               <FormControl sx={{ m: 1, width: 200 }}>
@@ -145,7 +146,7 @@ const ListingsPage = (props) => {
                     </MenuItem>
                   ))}
                 </Select>
-              </FormControl>{' '}
+              </FormControl>
             </div>
             <div className='search-input'>
               <TextField
@@ -157,9 +158,26 @@ const ListingsPage = (props) => {
                 value={searchStateVar}
                 onChange={(e) => setSearchStateVar(e.target.value)}
               />
-              <IconButton variant='contained' onClick={handleSubmit}>
-                <SearchIcon style={{ color: theme.primary.red }} />
-              </IconButton>
+              <Button
+                className='button-style'
+                variant='contained'
+                onClick={handleSubmit}
+                style={{ backgroundColor: theme.primary.red, marginLeft: '10px'}}
+              >
+                Apply Filter
+              </Button>
+              <Button
+                className='button-style clear-filter-button'
+                variant='outlined'
+                onClick={handleClearFilter}
+                style={{
+                  color: theme.primary.red,
+                  borderColor: theme.primary.red,
+                  marginLeft: '10px'
+                }}
+              >
+                Clear Filter
+              </Button>
             </div>
           </div>
         </div>
@@ -171,9 +189,7 @@ const ListingsPage = (props) => {
                   style={{ textDecoration: 'none' }}
                   to={`item-detail/${product.item.id}`}
                 >
-                  <ItemCard
-                    product={product.item}
-                  />
+                  <ItemCard product={product.item} />
                 </Link>
               </Grid>
             ))}

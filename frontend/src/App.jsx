@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import AuthPopup from './components/AuthPopup';
 import OrderDetailsPageAgain from './pages/OrderDetailsPageAgain';
 import NotFound from './pages/NotFound';
+import DisplayListingPage from './pages/DisplayListingPage';
 
 function App() {
   const { isLoggedIn } = useSelector((state) => {
@@ -25,6 +26,7 @@ function App() {
     'showCheckout': false,
     'showOrderDetails': false,
     'showAddItem': true,
+    'showDisplayListing': true,
     'showMyProfile': true,
     'showAboutUs': true
   };
@@ -48,6 +50,10 @@ function App() {
         <Route
           path='/add-item'
           element={showPages.showAddItem ? isLoggedIn ? <AddItemPage /> : <AuthPopup /> : <NotFound />}
+        />
+        <Route
+          path='/listing/:listingId'
+          element={showPages.showDisplayListing ? isLoggedIn ? <DisplayListingPage /> : <AuthPopup /> : <NotFound />}
         />
 
         <Route

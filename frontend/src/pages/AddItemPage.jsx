@@ -125,10 +125,6 @@ const AddItemPage = () => {
         throw new Error(`Item ${index + 1}: Invalid price`);
       if (!item.quantity || item.quantity <= 0)
         throw new Error(`Item ${index + 1}: Invalid quantity`);
-      // if (!item.category)
-      //   throw new Error(`Item ${index + 1}: No category selected`);
-      // if (!item.description || item.description.length < 30)
-      //   throw new Error(`Item ${index + 1}: Invalid or too short description`);
     });
   };
 
@@ -156,25 +152,6 @@ const AddItemPage = () => {
         listingData['pickup_address'] = pickupAddress
       }
 
-      //   const newItem = {
-      //           imageName: item.image.name,
-      //           imageBase64: reader.result,
-      //           price: item.price,
-      //           quantity: item.quantity,
-      //           category: item.category,
-      //           description: item.description
-      //         };
-      // const formData = new FormData();
-      // formData.append('name', itemName);
-      // formData.append('description', description);
-      // formData.append('delivery_or_pickup', deliveryPickupOption);
-
-      // if (deliveryPickupOption === 'delivery') {
-      //   formData.append('delivery_time', deliveryTime);
-      // } else {
-      //   formData.append('pickup_address', pickupAddress);
-      // }
-      console.log("TRYING TO SUBMIT 2");
 
       // Function to convert file to Base64 and transform the object
       function convertToNewObject(items) {
@@ -209,13 +186,7 @@ const AddItemPage = () => {
         console.log("LISTING:", JSON.stringify(listingData));
         await handlePostRequest2(listingData);
         // clearForm();
-        // Now you can use the newItems array with the desired structure
       });
-      // const itemsJson = JSON.stringify(items);
-      // formData.append('items', itemsJson);
-
-
-      // Replace with your POST request function
       
     } catch (error) {
       setErrorDisplay('show');
@@ -232,22 +203,6 @@ const AddItemPage = () => {
     }
   };
 
-  const handlePostRequest = async (body) => {
-    try {
-      const response = await postRequest(API_ENDPOINTS.addItem, body, false); // 'application/x-www-form-urlencoded'
-      if (response) {
-        setErrorDisplay('none');
-      }
-    } catch (error) {
-      console.error('Error in POST request:', error);
-      setErrorDisplay('show');
-      if (error.message) {
-        setErrorMessage(error.message);
-      }
-      return;
-    }
-    clearForm();
-  };
 
   const handlePostRequest2 = async (body) => {
     try {
@@ -401,66 +356,6 @@ const AddItemPage = () => {
                   )}
               </Box>
             </div>
-            {/* <div className='add-item-input' style={{ marginBottom: '20px' }}>
-              <TextField
-                fullWidth
-                oninput="validity.valid||(value='');"
-                name='price'
-                label='Price ($)'
-                min='0'
-                value={price}
-                type='number'
-                onChange={(e) => setPrice(e.target.value)}
-                inputRef={register('price', {
-                  required: true,
-                })}
-              />
-              <Box>
-                {errors.price && errors.price.type === 'required' && (
-                  <span className='error-message'>This is required field</span>
-                )}
-              </Box>
-            </div>
-            <div className='add-item-input' style={{ marginBottom: '20px' }}>
-              <TextField
-                fullWidth
-                name='quantity'
-                label='Quantity'
-                value={quantity}
-                oninput="validity.valid||(value='');"
-                min='1'
-                type='number'
-                onChange={(e) => setQuantity(e.target.value)}
-                inputRef={register('quantity', {
-                  required: true,
-                })}
-              />
-              <Box>
-                {errors.quantity && errors.quantity.type === 'required' && (
-                  <span className='error-message'>This is required field</span>
-                )}
-              </Box>
-            </div>
-
-            <div className='add-item-input' style={{ marginBottom: '20px' }}>
-              <FormControl fullWidth>
-                <InputLabel>Category</InputLabel>
-                <Select
-                  // labelId='multiple-checkbox-label2'
-                  // id='multiple-checkbox2'
-                  input={<OutlinedInput label='Category' />}
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  {categories_tabs.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      <ListItemText primary={name} />
-                    </MenuItem>
-                  ))}
-                  <MenuItem value='other'>Other</MenuItem>
-                </Select>
-              </FormControl>
-            </div> */}
 
             <div
               className='delivery-pickup-input'
@@ -526,29 +421,6 @@ const AddItemPage = () => {
                 }
               })()}
 
-              {/* {(() => {
-                if (checkedDeliveryPickup === 'pickup') {
-                  return (
-                    <div
-                      className='pickup-address'
-                      style={{ marginBottom: '20px', alignItems: 'left' }}
-                    >
-                      <FormControl>
-                        <FormLabel>Pickup Address</FormLabel>
-
-                        <TextField
-                          fullWidth
-                          label='Pickup Address'
-                          value={pickupAddress}
-                          defaultValue={renderAddress()}
-                          type='text'
-                          onChange={(e) => setPickupAddr(e.target.value)}
-                        />
-                      </FormControl>
-                    </div>
-                  );
-                }
-              })()} */}
             </section>
 
             <Button
@@ -558,12 +430,7 @@ const AddItemPage = () => {
               tabIndex={-1}
               startIcon={<CloudUploadIcon />}
               style={{
-                // background: theme.primary.red,
-                // // width: '100%',
-                // margin: '5px',
-
                 background: 'white',
-                // width: '100%',
                 margin: '5px',
                 color: theme.primary.red,
                 borderColor: theme.primary.red,
@@ -577,7 +444,6 @@ const AddItemPage = () => {
                 type="file"
                 onChange={(e) => {
                   handleImageChange(e);
-                  // selectFiles(e);
                 }}
                 multiple
                 ref={myref}
@@ -585,81 +451,8 @@ const AddItemPage = () => {
                 id='image-upload'
               />
             </Button>
-
-            {/* <div className='add-item-input' style={{ marginBottom: '20px' }}>
-              <input
-                accept='image/png, image/jpg, image/jpeg'
-                id='image-upload'
-                type='file'
-                onChange={(e) => {
-                  // handleImageChange(e);
-                  selectFiles(e);
-                }}
-                ref={myref}
-                multiple
-              />
-            </div> */}
             
             <div className='add-item-input' style={{ marginBottom: '20px' }}>
-{/* 
-      {imagePreviews && (
-        <div>
-          {imagePreviews.map((img, i) => {
-            return (
-              <img className="preview" src={img} alt={"image-" + i} key={i} style={{ width: '100%', height: '300px', objectFit: 'contain' }}/>
-            );
-          })}
-        </div>
-      )} */}
-
-                  {/* Image Previews with Input Fields */}
-                  {/* {imagePreviews.map((preview, index) => (
-              <div key={index} style={{ marginTop: '20px' }}>
-
-        <Card
-          className='add-item-page'
-          style={{
-            // overflow: 'scroll',
-            // padding: '20px',
-            // borderRadius: '8px',
-            // border: '2px solid #ccc',
-            maxWidth: '1000px',
-            height: '30%',
-            width: '30%',
-            // margin: 'auto',
-            // display: 'flex'
-          }}
-        >
-                <img src={preview} alt={`image-${index}`} style={{ width: '100%', height: '500px', objectFit: 'contain' }} />
-                <TextField
-                  // fullWidth
-                  label='Image Name'
-                  value={imageDetails[index].name}
-                  onChange={(e) => handleImageDetailsChange(index, 'name', e.target.value)}
-                />
-                <TextField
-                  // fullWidth
-                  label='Price'
-                  type="number"
-                  value={imageDetails[index].price}
-                  onChange={(e) => handleImageDetailsChange(index, 'price', e.target.value)}
-                />
-                <TextField
-                  // fullWidth
-                  label='Quantity'
-                  type="number"
-                  value={imageDetails[index].quantity}
-                  onChange={(e) => handleImageDetailsChange(index, 'quantity', e.target.value)}
-                />
-                </Card>
-              </div>
-
-              
-            ))} */}
-
-
-
-
 
             {/* Display image previews */}
             <Grid container spacing={2}>

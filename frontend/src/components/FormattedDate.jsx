@@ -11,7 +11,7 @@ const FormattedDate = (date) => {
   });
 
   // returns the formatted date
-  return <div>{formattedDate}</div>;
+  return <>{formattedDate}</>;
 };
 
 // exports the formatteddate component
