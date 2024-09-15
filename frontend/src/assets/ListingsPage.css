@@ -2,17 +2,18 @@
   margin: 5px;
   font-size: 2em;
   font-weight: bold;
+  display: 'flex';
 }
 .search-input {
   display: flex;
   align-items: center;
 }
 
-.filters-parent {
+/* .filters-parent {
   display: flex;
-}
+} */
 .listings-page-header {
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
   margin: 15px;
   margin-bottom: 40px;
@@ -27,5 +28,9 @@
 }
 #multiple-checkbox {
   height: 15px;
-  width: 50px;
+  /* width: 50px; */
+}
+
+#multiple-checkbox-label {
+  color: #C41230;
 }
