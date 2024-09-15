@@ -13,6 +13,8 @@ User = get_user_model()
 def items_get_items(request):
     search_keyword = request.GET.get('search')
     categories = request.GET.get('category')
+    min_price = request.GET.get('minPrice')
+    max_price = request.GET.get('maxPrice')
 
     items = Item.objects.filter(current_status='listed')
 
@@ -22,6 +24,21 @@ def items_get_items(request):
     if categories:
         categories = categories.split(',')
         items = items.filter(category__in=categories)
+
+    # Filter by min_price and max_price
+    if min_price:
+        try:
+            min_price = float(min_price)
+            items = items.filter(price__gte=min_price)
+        except ValueError:
+            return Response({"message": "Invalid minPrice value."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if max_price:
+        try:
+            max_price = float(max_price)
+            items = items.filter(price__lte=max_price)
+        except ValueError:
+            return Response({"message": "Invalid maxPrice value."}, status=status.HTTP_400_BAD_REQUEST)
 
     serialized_data_with_ids = []
 
