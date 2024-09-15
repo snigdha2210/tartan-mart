@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography, Box, CardMedia, Divider, Chip, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
-import { fetchItem, addToCart, updateSelectedItem } from '../store/actions/actions';
+import { fetchItem, updateSelectedItem } from '../store/actions/actions';
 import { getRequestAuthed } from '../util/api';
 import { useTheme } from '@emotion/react';
 
@@ -63,15 +63,6 @@ const ItemDetailsPage = () => {
   if (selectedItem) {
     ({ item, seller } = selectedItem);
   }
-
-  const addItemToCart = async () => {
-    const res = dispatch(addToCart(selectedItem));
-    console.log(res);
-    setSnackbarOpen(true);
-  };
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
 
   const handleContactSeller = () => {
     const whatsappUrl = `https://wa.me/${seller.seller_mobile_number}`;
