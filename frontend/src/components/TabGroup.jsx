@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTheme } from '@emotion/react';
 
 const Tab = styled.button`
   padding: 10px 30px;
@@ -15,12 +16,13 @@ const Tab = styled.button`
   ${({ active }) =>
     active &&
     `
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid #C41230;
     opacity: 1;
   `}
 `;
 
 const TabGroup = ({ types, active, clickHandler }) => {
+  const theme = useTheme();
   return (
     <div>
       {types.map((type) => (
@@ -28,7 +30,7 @@ const TabGroup = ({ types, active, clickHandler }) => {
           key={type}
           active={active === type ? active : null}
           onClick={() => clickHandler(type)}
-          style={{ fontFamily: 'Inter' }}
+          style={{ fontFamily: 'Inter'}}
         >
           {type}
         </Tab>
