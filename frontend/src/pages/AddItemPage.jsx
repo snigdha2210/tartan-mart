@@ -68,7 +68,7 @@ const AddItemPage = () => {
   const [errorDisplay, setErrorDisplay] = useState('none');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { my_items, order_items, profile, my_orders } = useSelector((state) => {
+  const { my_listings, profile } = useSelector((state) => {
     return state.profile;
   });
 
@@ -147,7 +147,7 @@ const AddItemPage = () => {
         "delivery_or_pickup": deliveryPickupOption,
       };
       if (deliveryPickupOption === 'delivery') {
-        listingData['delivery'] = deliveryTime
+        listingData['delivery_time'] = deliveryTime
       } else {
         listingData['pickup_address'] = pickupAddress
       }
@@ -412,7 +412,7 @@ const AddItemPage = () => {
                         fullWidth
                         label='Pickup Address'
                         value={pickupAddress}
-                        type='number'
+                        type='text'
                         onChange={(e) => setPickupAddr(e.target.value)}
                         defaultValue={renderAddress()}
                       />
@@ -509,7 +509,7 @@ const AddItemPage = () => {
                             // labelId='multiple-checkbox-label2'
                             // id='multiple-checkbox2'
                             input={<OutlinedInput label='Category' />}
-                            value={category}
+                            value={items[index].category.charAt(0).toUpperCase() + items[index].category.substring(1).toLowerCase()}
                             onChange={(e) => {
                                 setCategory(e.target.value);
                                 handleImageDetailsChange(index, 'category', e.target.value.toLowerCase());
