@@ -5,19 +5,18 @@ import NavBar from '../components/Nav.jsx';
 
 import { useSelector } from 'react-redux';
 import Loader from '../components/Loader';
-import { Avatar } from '@mui/material';
+import { Avatar, Grid } from '@mui/material';
 import { Card } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { Box } from '@mui/material';
-import ItemList from '../components/ItemList.jsx';
 import SettingsForm from './SettingsForm.jsx';
 import API_ENDPOINTS from '../constants/apiEndpoints.js';
 import { getRequestAuthed } from '../util/api.jsx';
 import { refreshProfile } from '../store/actions/actions.jsx';
 import { useDispatch } from 'react-redux';
 import { filterActiveSold } from '../util/profile.jsx';
-import OrderList from '../components/OrderList.jsx';
-import PurchasesList from '../components/PurchasesList.jsx';
+import ListingCard from '../components/ListingCard';
+import '../assets/ListingsPage.css';
 
 const profile_tabs = [
   'Listings',
@@ -30,6 +29,35 @@ const ProfilePage = (props) => {
   let location = useLocation();
   const dispatch = useDispatch();
   var activeTabInit = profile_tabs[0];
+
+  useEffect(() => {
+    const updateListingsOnProfilePage = async () => {
+      try {
+        const url = new URL(API_ENDPOINTS.getListing);
+        url.searchParams.append('search', searchStateVar);
+        url.searchParams.append(
+          'category',
+          categoryFilter.join(',').toLowerCase()
+        );
+
+        const response = await getRequestAuthed(url.toString());
+
+        if (response) {
+          dispatch(updateItems(response));
+        }
+      } catch (error) {
+        console.error('Error in POST request:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    updateListingsOnProfilePage();
+  }, []);
+
+  const { items, selectedItem } = useSelector((state) => {
+    return state.items;
+  });
 
   try {
     activeTabInit = location.state.active;
@@ -53,13 +81,11 @@ const ProfilePage = (props) => {
       try {
         data = await getRequestAuthed(API_ENDPOINTS.getProfile);
         if (data) {
-          let new_items = filterActiveSold(data['items']);
+          // let new_items = filterActiveSold(data['items']);
           dispatch(
             refreshProfile(
-              new_items,
-              data['items_order'],
+              data['listings'],
               data['profile'],
-              data['orders']
             )
           );
 
@@ -76,7 +102,7 @@ const ProfilePage = (props) => {
     fetchProfileDataInit();
   }, []);
 
-  const { my_items, order_items, profile, my_orders } = useSelector((state) => {
+  const { my_listings, profile } = useSelector((state) => {
     return state.profile;
   });
 
@@ -172,27 +198,18 @@ const ProfilePage = (props) => {
             {(() => {
               if (active === profile_tabs[0]) {
                 return (
-                  <Box sx={{ minHeight: '50vh' }}>
-                    <ItemList
-                      items={my_items}
-                      withUpdate={{ archive: true, delete: false }}
-                    />
+                  <Box sx={{ minHeight: '5vh' }}>
+                    <div className='listings-page-body'>
+                      <Grid container spacing={2} className='listings-grid' justifyContent="center"> {/* Center the grid items */}
+                        {my_listings.map((listing) => (
+                          <Grid key={listing.id} item>
+                            <ListingCard listing={listing} />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </div>
                   </Box>
                 );
-
-              /* removing order features for live version */
-              // } else if (active === profile_tabs[1]) {
-              //   return (
-              //     <Box sx={{ minHeight: '50vh' }}>
-              //       <OrderList order_items={order_items} />
-              //     </Box>
-              //   );
-              // } else if (active === profile_tabs[2]) {
-              //   return (
-              //     <Box sx={{ minHeight: '50vh' }}>
-              //       <PurchasesList purchases={my_orders} withUpdate={false} />
-              //     </Box>
-              //   );
               } else {
                 return (
                   <Box sx={{ minHeight: '50vh' }}>

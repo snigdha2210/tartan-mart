@@ -16,10 +16,8 @@ const LoginButton = ({ onSuccess, onFailure }) => {
         let new_items = filterActiveSold(data['items']);
         dispatch(
           refreshProfile(
-            new_items,
-            data['items_order'],
+            data['listings'],
             data['profile'],
-            data['orders']
           )
         );
       }

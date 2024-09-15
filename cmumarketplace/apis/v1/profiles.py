@@ -27,7 +27,11 @@ def profiles_get_profile(request):
     serializer = ListingSerializer(listings, many=True)
     user_listings = serializer.data
     for listing in user_listings:
-        listing.pop('listing_item')
+        listing_item = listing.pop('listing_item')
+        listing_images = []
+        for item in listing_item:
+            listing_images.append({'image': item['image']})
+        listing['listing_item'] = listing_images
     
     response_data['listings'] = user_listings
     return Response(response_data, status=status.HTTP_200_OK)

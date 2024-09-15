@@ -13,7 +13,8 @@ const API_ENDPOINTS = {
   updateProfileSettings: BASE_URL + 'updateProfile/',
   getOrderDetails: BASE_URL + 'getOrderDetails/',
   getOrder: BASE_URL + 'getOrder/',
-  getListing: BASE_URL + 'listing'
+  getListing: BASE_URL + 'listing/',
+  updateListing: BASE_URL + 'updateListing/'
 };
 
 export default API_ENDPOINTS;

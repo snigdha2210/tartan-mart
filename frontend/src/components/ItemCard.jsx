@@ -35,7 +35,7 @@ export default function ItemCard(props) {
       <CardActionArea onClick={handleCardClick}>
         <CardMedia
           component='img'
-          height='180'
+          height={props.height}
           image={imageUrl}
           alt={props.product.name}
           sx={{
