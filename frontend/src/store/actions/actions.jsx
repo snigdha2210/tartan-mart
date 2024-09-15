@@ -40,13 +40,11 @@ export const clearItems = () => {
   };
 };
 
-export const refreshProfile = (my_items, order_items, profile, my_orders) => {
+export const refreshProfile = (my_listings, profile) => {
   return {
     type: actionTypes.REFRESH_PROFILE,
-    my_items: my_items,
-    order_items: order_items,
+    my_listings: my_listings,
     my_profile: profile,
-    my_orders: my_orders,
   };
 };
 

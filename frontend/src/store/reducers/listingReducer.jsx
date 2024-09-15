@@ -5,20 +5,20 @@ import storage from 'redux-persist/lib/storage'
 
 const initialState = {
   my_listings: [],
-  // order_items: [],
+  order_items: [],
   profile: {},
-  // my_orders: [],
+  my_orders: [],
 };
 
-const profileReducer = (state = initialState, action) => {
+const listingReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.REFRESH_PROFILE:
       return {
         ...state,
-        my_listings: action.my_listings,
-        // order_items: action.order_items,
+        my_items: action.my_items,
+        order_items: action.order_items,
         profile: action.my_profile,
-        // my_orders: action.my_orders,
+        my_orders: action.my_orders,
       };
     case actionTypes.UPDATE_PROFILE:
         return {
@@ -33,4 +33,4 @@ const profileReducer = (state = initialState, action) => {
   }
 };
 
-export default profileReducer;
+export default listingReducer;
