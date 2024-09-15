@@ -25,7 +25,7 @@ class ListingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Listing
-        fields = ['id', 'name', 'description', 'delivery_or_pickup', 'delivery_time', 'pickup_address', 'listing_item']
+        fields = ['id', 'name', 'description', 'delivery_or_pickup', 'delivery_time', 'pickup_address', 'listing_item', 'created_date', 'updated_date']
     
     def create(self, validated_data):
         items_data = validated_data.pop('listing_item')

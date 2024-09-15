@@ -1,23 +1,17 @@
 from django.contrib.auth import get_user_model
 
-from cmumarketplace.apis.util.utils import get_error_string, parse_jwt
-from cmumarketplace.models import UserProfile
-from cmumarketplace.serializers import ProfileSerializer
+from cmumarketplace.apis.util.utils import get_authenticated_user, get_error_string, parse_jwt, validate_jwt
+from cmumarketplace.models import Listing, UserProfile
+from cmumarketplace.serializers import ListingSerializer, ProfileSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
 
 User = get_user_model()
 
+@validate_jwt
 def profiles_get_profile(request):
-    token = request.headers.get('Authorization')
-    decoded_token = parse_jwt(token)
-    email = decoded_token['email']
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response({"message": "User unidentified."}, status=status.HTTP_401_UNAUTHORIZED)
-    
+    user = get_authenticated_user(request)
     response_data = {}
     try:
         profile = UserProfile.objects.get(user=user)
@@ -29,6 +23,13 @@ def profiles_get_profile(request):
     except UserProfile.DoesNotExist:
         return Response({"message": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
+    listings = Listing.objects.filter(user=user)
+    serializer = ListingSerializer(listings, many=True)
+    user_listings = serializer.data
+    for listing in user_listings:
+        listing.pop('listing_item')
+    
+    response_data['listings'] = user_listings
     return Response(response_data, status=status.HTTP_200_OK)
 
 def profiles_update_profile(request):
