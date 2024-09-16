@@ -12,7 +12,8 @@ import {
   Button,
   TextField,
   Box,
-  Chip
+  Chip,
+  Typography
 } from '@mui/material';
 import ItemCard from '../components/ItemCard';
 import Loader from '../components/Loader';
@@ -349,7 +350,7 @@ const ListingsPage = (props) => {
 
         {/* </div> */}
         <div className='listings-page-body'>
-          <Grid container spacing={2} className='listings-grid' justifyContent={'space-between'}>
+          <Grid container spacing={10} className='listings-grid'>
             {items.map((product) => (
               <Grid key={product.item.id} item>
                 <Link
@@ -361,6 +362,11 @@ const ListingsPage = (props) => {
               </Grid>
             ))}
           </Grid>
+          {items.length === 0 && (
+          <Typography variant="h6" align="center" color="textSecondary" style={{ marginTop: '100px' }}>
+            No items found
+          </Typography>
+        )}
         </div>
       <Footer />
     </>

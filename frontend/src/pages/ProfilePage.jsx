@@ -5,7 +5,7 @@ import NavBar from '../components/Nav.jsx';
 
 import { useSelector } from 'react-redux';
 import Loader from '../components/Loader';
-import { Avatar, Grid } from '@mui/material';
+import { Avatar, Grid, Typography, Alert } from '@mui/material';
 import { Card } from '@mui/material';
 import { useLocation, Link } from 'react-router-dom';
 import { Box } from '@mui/material';
@@ -17,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import { filterActiveSold } from '../util/profile.jsx';
 import ListingCard from '../components/ListingCard';
 import '../assets/ListingsPage.css';
+import { useTheme } from '@emotion/react';
 
 const profile_tabs = [
   'Listings',
@@ -111,6 +112,8 @@ const ProfilePage = (props) => {
     setImage(file);
   };
 
+  const theme = useTheme();
+
   if (loading) {
     return (
       <div>
@@ -126,8 +129,25 @@ const ProfilePage = (props) => {
         accountDetails={{ username: username, email: email }}
         name=''
       />
-      <div className='page-container'>
-        <div className='page-title-text'>My Profile</div>
+        <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent={'center'}
+              // alignItems="center"
+              padding="20px"
+              borderRadius="8px"
+              boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
+              backgroundColor={theme.primary.red}
+              color='#fff'
+              marginLeft={5}
+              marginRight={5}
+              marginTop={2}
+              marginBottom={5}
+              
+            > <div className='page-title-text'>My Profile</div></Box>
+        {/* <Alert severity='error' sx={{ display: errorDisplay }}>
+          {errorMessage}
+        </Alert> */}
         <Card
           elevation={4}
           style={{
@@ -208,6 +228,11 @@ const ProfilePage = (props) => {
                           </Grid>
                         ))}
                       </Grid>
+                      {my_listings.length === 0 && (
+          <Typography variant="h6" align="center" color="textSecondary" style={{ marginTop: '20px' }}>
+            No Listings found
+          </Typography>
+        )}
                     </div>
                   </Box>
                 );
@@ -221,7 +246,6 @@ const ProfilePage = (props) => {
             })()}
           </section>
         </Card>
-      </div>
       <Footer />
     </>
   );

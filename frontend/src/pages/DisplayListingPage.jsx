@@ -334,6 +334,7 @@ const DisplayListingPage = ({ match }) => {
                   required: true,
                   minLength: 50,
                 })}
+                multiline
               />
               <Box>
                 {'description' in errors &&
@@ -532,9 +533,16 @@ const DisplayListingPage = ({ match }) => {
             
             </div>
 
-            <Button type='submit' variant='contained' onClick={handleFormSubmit}>
-              Save Changes
-            </Button>
+            <Button
+                  variant='contained'
+                  onClick={handleFormSubmit}
+                  sx={{ backgroundColor: theme.primary.red, ':hover': {
+                    bgcolor: 'pink', // theme.palette.primary.main
+                    color: 'white',
+                  }, marginRight:2 }}
+                >
+                  Save Changes
+                </Button>
           </form>
         </Card>
       <Footer />
