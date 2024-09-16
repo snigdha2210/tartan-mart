@@ -159,6 +159,7 @@ const ProfilePage = (props) => {
                     alignSelf: 'center',
                   },
                 }}
+                sx={{ width: 100, height: 100 }}
               />
               <input
                 accept='image/*'

@@ -227,7 +227,7 @@ const ListingsPage = (props) => {
               marginRight={5}
               marginBottom={5}
               marginTop={2}
-            > <div className='page-title-text'>Find Sellers on TartanMart</div></Box>
+            > <div className='page-title-text'>Find Products on TartanMart, Contact the Seller</div></Box>
 
             <Box
               display="flex"

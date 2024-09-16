@@ -324,7 +324,8 @@ const AddItemPage = () => {
           }}
         >
           <form onSubmit={handleSubmit(handleFormSubmit)}>
-            <div className='add-item-input' style={{ marginBottom: '20px' }}>
+          <i>*Listing Name and Description will only be visible to you. Only Sellers can manage their listings.</i>
+            <div className='add-item-input' style={{ marginBottom: '20px', marginTop: '20px' }}>
               <TextField
                 name='name'
                 fullWidth
@@ -335,6 +336,7 @@ const AddItemPage = () => {
                   required: true,
                 })}
               />
+              
               <Box>
                 {errors.name && errors.name.type === 'required' && (
                   <span className='error-message'>This is required field</span>
@@ -352,7 +354,11 @@ const AddItemPage = () => {
                   required: true,
                   minLength: 50,
                 })}
+                multiline
+                // rows={5}
+                // maxRows={4}
               />
+              
               <Box>
                 {'description' in errors &&
                   errors.description.type === 'required' && (

@@ -273,10 +273,22 @@ const DisplayListingPage = ({ match }) => {
         accountDetails={{ username: username, email: email }}
         name=''
       />
-      <div className='page-container'>
-        <div className='page-title-text' style={{ marginBottom: '20px' }}>
-          Edit Listing
-        </div>
+        <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent={'center'}
+              // alignItems="center"
+              padding="20px"
+              borderRadius="8px"
+              boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
+              backgroundColor={theme.primary.red}
+              color='#fff'
+              marginLeft={5}
+              marginRight={5}
+              marginTop={2}
+              marginBottom={5}
+              
+            > <div className='page-title-text'>Edit Listing</div></Box>
         <Alert severity='error' sx={{ display: errorDisplay }}>
           {errorMessage}
         </Alert>
@@ -525,7 +537,6 @@ const DisplayListingPage = ({ match }) => {
             </Button>
           </form>
         </Card>
-      </div>
       <Footer />
     </>
   );
