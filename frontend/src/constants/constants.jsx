@@ -14,37 +14,36 @@ export const categories = [
     name: 'Electronics',
     image:
       // 'https://img.icons8.com/badges/48/multiple-devices.png'
-      electronics,
-      // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/monitor.png',
+      // electronics,
+      'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/monitor.png',
   },
   {
     id: 3,
     name: 'Furniture',
     image:
-      furniture,
-      // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/furniture.png',
+      // furniture,
+      'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/furniture.png',
   },
   {
     id: 4,
     name: 'Clothing',
     image:
-    clothing,
-      // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/clothes.png',
+    // clothing,
+      'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/clothes.png',
   },
   {
     id: 5,
     name: 'Home',
-
     image: 
-    home,
-    // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/home.png',
+    // home,
+    'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/home.png',
   },
   {
     id: 6,
     name: 'Beauty',
     image:
-    beauty,
-      // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/beauty.png',
+    // beauty,
+      'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/beauty.png',
   },
   // {
   //   id: 7,

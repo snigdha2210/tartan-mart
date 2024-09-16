@@ -24,16 +24,19 @@
   content: '⚠ ';
 }
 
-.page-container {
-  margin-bottom: '20px';
-  justify-content: left;
-  align-items: left;
-}
-
 .page-title-text {
-  margin-bottom: '20px';
+  /* margin-bottom: '20px'; */
   justify-content: left;
   align-items: left;
   justify-self: left;
   align-content: flex-start;
+}
+
+.listings-page-header {
+  /* display: flex; */
+  justify-content: space-between;
+  margin: 15px;
+  margin-bottom: 40px;
+  /* margin-left: 104px;
+  margin-right:104px; */
 }

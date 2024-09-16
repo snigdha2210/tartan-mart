@@ -69,7 +69,7 @@ const DisplayListingPage = ({ match }) => {
   const [errorDisplay, setErrorDisplay] = useState('none');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { my_items, order_items, profile, my_orders } = useSelector((state) => {
+  const { my_listings, profile } = useSelector((state) => {
     return state.profile;
   });
 
@@ -93,18 +93,41 @@ const DisplayListingPage = ({ match }) => {
 //   const listingId = match.params.id;
   const { listingId } = useParams();
 
+  const handleImageDetailsChange = (index, field, value) => {
+    const updatedItems = items.map((item, idx) =>
+      index === idx ? { ...item, [field]: value } : item
+    );
+    setItems(updatedItems);
+  };
+
+  const handleImageChange = (event) => {
+    const files = Array.from(event.target.files);
+    const newItems = files.map((file) => ({
+      image: file,
+      price: '',
+      quantity: '',
+      category: '',
+      description: '',
+    }));
+
+    setItems([...items, ...newItems]);
+
+    const newImagePreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews([...imagePreviews, ...newImagePreviews]);
+  };
+
   useEffect(() => {
     // Fetch existing listing data
     const fetchListingData = async () => {
       try {
-        const response = await getRequestAuthed(`${API_ENDPOINTS.getListing}/${listingId}`);
+        const response = await getRequestAuthed(`${API_ENDPOINTS.getListing}${listingId}`);
         const listing = response;
-        console.log("LISTING:" + JSON.stringify(listing));
+        // console.log("LISTING:" + JSON.stringify(listing));
         setItemName(listing.name);
         setDescription(listing.description);
         setDeliveryPickupOption(listing.delivery_or_pickup);
         setItems(listing.listing_item);
-        console.log("ITEMS:" + JSON.stringify(listing.listing_item));
+        // console.log("ITEMS:" + JSON.stringify(listing.listing_item));
         if (listing.delivery_or_pickup === 'delivery') {
           setDeliveryTime(listing.delivery_time);
         } else {
@@ -155,6 +178,7 @@ const DisplayListingPage = ({ match }) => {
 
     try {
       validateFormData();
+      console.log("VALID FORM");
       const listingData = {
         "name": itemName,
         "description": description,
@@ -165,23 +189,27 @@ const DisplayListingPage = ({ match }) => {
       } else {
         listingData['pickup_address'] = pickupAddress
       }
-
+      console.log("CHECKPOINT 2");
+      // console.log("ITEMS:" + JSON.stringify(items));
       function convertToNewObject(items) {
         const promises = items.map(item => {
-          if (item.image) {
-            const reader = new FileReader();
+          console.log("RESOLVING ITEM:" + JSON.stringify(item));
+          if (item.image.name) {
+            // if (!item.image.toString().includes('s3')) {
+              const reader = new FileReader();
 
-            return new Promise((resolve) => {
-              reader.onloadend = () => {
-                const newItem = {
-                  ...item,
-                  image_b64: reader.result,
-                  image_name: item.image.name,
+              return new Promise((resolve) => {
+                reader.onloadend = () => {
+                  const newItem = {
+                    ...item,
+                    image_b64: reader.result,
+                    image_name: item.image.name,
+                  };
+                  resolve(newItem);
                 };
-                resolve(newItem);
-              };
-              reader.readAsDataURL(item.image);
-            });
+                reader.readAsDataURL(item.image);
+              });
+            // }
           } else {
             return Promise.resolve(item);
           }
@@ -191,8 +219,9 @@ const DisplayListingPage = ({ match }) => {
       }
 
       convertToNewObject(items).then(async newItems => {
+        console.log("CHECKPOINT 3");
         listingData['listing_item'] = newItems;
-        await handlePutRequest(listingData);
+        await handlePutRequest(JSON.stringify(listingData));
       });
       
     } catch (error) {
@@ -209,6 +238,7 @@ const DisplayListingPage = ({ match }) => {
   }
 
   const handlePutRequest = async (body) => {
+    console.log("SENDING PUT REQUEST");
     try {
       const response = await putRequest(`${API_ENDPOINTS.updateListing}/${listingId}`, body, 'application/json');
       if (response) {
@@ -253,7 +283,10 @@ const DisplayListingPage = ({ match }) => {
         <Card
           className='add-item-page'
           style={{
+            // overflow: 'scroll',
             padding: '20px',
+            // borderRadius: '8px',
+            // border: '2px solid #ccc',
             maxWidth: '1000px',
             height: '100%',
             width: '100%',
@@ -293,38 +326,19 @@ const DisplayListingPage = ({ match }) => {
               <Box>
                 {'description' in errors &&
                   errors.description.type === 'required' && (
-                    <span className='error-message'>This is required field</span>
+                    <span className='error-message'>
+                      This is required field
+                    </span>
                   )}
-                {'description' in errors &&
+                {errors.description &&
                   errors.description.type === 'minLength' && (
                     <span className='error-message'>
-                      Description must have 50+ characters
+                      Minimum characters 50 required
                     </span>
                   )}
               </Box>
             </div>
 
-            <div className='add-item-input'>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='category-select'>Category</InputLabel>
-                <Select
-                  fullWidth
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  input={<OutlinedInput label='Category' />}
-                >
-                  {categories_tabs.map((tab) => (
-                    <MenuItem key={tab.id} value={tab.label}>
-                      <ListItemText primary={tab.label} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
-
-            <div className='delivery-section'>
-              {/* Delivery Time or Pickup Address inputs based on the deliveryPickupOption */}
-            </div>
             <div
               className='delivery-pickup-input'
               style={{ marginBottom: '20px' }}
@@ -347,6 +361,7 @@ const DisplayListingPage = ({ match }) => {
                 />
               </RadioGroup>
             </div>
+
             <section style={{ textAlign: 'center', marginTop: '20px' }}>
               {(() => {
                 if (deliveryPickupOption === 'delivery') {
@@ -379,7 +394,7 @@ const DisplayListingPage = ({ match }) => {
                         fullWidth
                         label='Pickup Address'
                         value={pickupAddress}
-                        type='number'
+                        type='text'
                         onChange={(e) => setPickupAddr(e.target.value)}
                         defaultValue={renderAddress()}
                       />
@@ -390,93 +405,122 @@ const DisplayListingPage = ({ match }) => {
 
             </section>
 
-            <div className='items-section'>
-              {/* Iterate over items and render each one with editing capabilities */}
-            </div>
-
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+              style={{
+                background: 'white',
+                margin: '5px',
+                color: theme.primary.red,
+                borderColor: theme.primary.red,
+                borderWidth:1,
+                borderStyle: 'solid',
+                boxShadow: 'none'
+              }}
+            >
+              Add Images
+              <VisuallyHiddenInput
+                type="file"
+                onChange={(e) => {
+                  handleImageChange(e);
+                  console.log("ITEMS:" + JSON.stringify(items));
+                }}
+                multiple
+                ref={myref}
+                accept='image/png, image/jpg, image/jpeg'
+                id='image-upload'
+              />
+            </Button>
+            
             <div className='add-item-input' style={{ marginBottom: '20px' }}>
 
             {/* Display image previews */}
             <Grid container spacing={2}>
-            {imagePreviews.map((preview, index) => (
+              {imagePreviews.map((preview, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card>
+                  <Card>
                     <CardContent>
-                    <img
+                      <img
                         src={preview}
                         alt={`image-${index}`}
                         style={{
-                        width: '100%',
-                        height: '200px',
-                        objectFit: 'contain',
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'contain',
                         }}
-                    />
-                    <TextField
+                      />
+                      <TextField
                             fullWidth
-                            // label='Item Name'
+                            label={items[index].name || 'Item Name'}
                             margin='normal'
-                            onChange={(e) =>
-                            handleImageDetailsChange(index, 'name', e.target.value)
-                            }
                             value={items[index].name}
-                        />
-                    <TextField
-                            fullWidth
-                            margin='normal'
                             onChange={(e) =>
-                            handleImageDetailsChange(index, 'description', e.target.value)
+                              handleImageDetailsChange(index, 'name', e.target.value)
                             }
+                          />
+                      <TextField
+                            fullWidth
+                            label={items[index].description || 'Image Description'}
+                            margin='normal'
                             value={items[index].description}
-                        />
-                        <TextField
+                            onChange={(e) =>
+                              handleImageDetailsChange(index, 'description', e.target.value)
+                            }
+                          />
+                          <TextField
                             fullWidth
+                            label={items[index].price || 'Price'}
                             type='number'
                             margin='normal'
-                            onChange={(e) =>
-                            handleImageDetailsChange(index, 'price', e.target.value)
-                            }
                             value={items[index].price}
-                        />
-                        <TextField
+                            onChange={(e) =>
+                              handleImageDetailsChange(index, 'price', e.target.value)
+                            }
+                          />
+                          <TextField
                             fullWidth
+                            label={items[index].quantity || 'Quantity'}
                             type='number'
                             margin='normal'
-                            onChange={(e) =>
-                            handleImageDetailsChange(index, 'quantity', e.target.value)
-                            }
                             value={items[index].quantity}
-                        />
+                            onChange={(e) =>
+                              handleImageDetailsChange(index, 'quantity', e.target.value)
+                            }
+                          />
                         <FormControl fullWidth margin='normal'>
-                        <InputLabel>Category</InputLabel>
-                        <Select
+                          <InputLabel>Category</InputLabel>
+                          <Select
                             // labelId='multiple-checkbox-label2'
                             // id='multiple-checkbox2'
                             input={<OutlinedInput label='Category' />}
-                            value={items[index].category}
+                            value={items[index].category.charAt(0).toUpperCase() + items[index].category.substring(1).toLowerCase()}
                             onChange={(e) => {
                                 setCategory(e.target.value);
                                 handleImageDetailsChange(index, 'category', e.target.value.toLowerCase());
+                              }
                             }
-                            }
-                        >
+                          >
                             {categories_tabs.map((name) => (
-                            <MenuItem key={name} value={name}>
+                              <MenuItem key={name} value={name}>
                                 <ListItemText primary={name} />
-                            </MenuItem>
+                              </MenuItem>
                             ))}
                             <MenuItem value='other'>Other</MenuItem>
-                        </Select>
+                          </Select>
                         </FormControl>
-                    
+                      
                     </CardContent>
-                </Card>
+                  </Card>
                 </Grid>
-            ))}
+              ))}
             </Grid>
-
+            
             </div>
 
-            <Button type='submit' variant='contained'>
+            <Button type='submit' variant='contained' onClick={handleFormSubmit}>
               Save Changes
             </Button>
           </form>

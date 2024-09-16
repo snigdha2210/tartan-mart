@@ -28,8 +28,9 @@ export default function ItemCard(props) {
   return (
     <Card
       sx={{
-        maxWidth: 400,
-        minWidth: 400,
+        // maxWidth: 400,
+        // minWidth: 400,
+        width: 400,
       }}
     >
       <CardActionArea onClick={handleCardClick}>

@@ -214,28 +214,21 @@ const ListingsPage = (props) => {
         accountDetails={{ username: username, email: email }}
         name='Products'
       />
-      <div className='listings-page'>
-        <div className='listings-page-header'>
-          <div display='flex' className='page-title-text'></div>
           <Box
               display="flex"
               flexDirection="row"
               justifyContent={'center'}
-              // alignItems="center"
               padding="20px"
               borderRadius="8px"
               boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
               backgroundColor={theme.primary.red}
               color='#fff'
-              // maxWidth="100%"
-              // margin="auto"
-              // margin-left="6vw"
-              // margin-right="6vw"
-              marginLeft={8}
-              marginRight={13}
-              marginTop={5}
+              marginLeft={5}
+              marginRight={5}
+              marginBottom={5}
+              marginTop={2}
             > <div className='page-title-text'>Find Sellers on TartanMart</div></Box>
-          <div className='filters-parent'>
+
             <Box
               display="flex"
               flexDirection="column"
@@ -244,13 +237,10 @@ const ListingsPage = (props) => {
               borderRadius="8px"
               boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
               backgroundColor="#fff"
-              // maxWidth="100%"
-              // margin="auto"
-              // margin-left="6vw"
-              // margin-right="6vw"
-              marginLeft={8}
-              marginRight={13}
-              marginTop={5}
+              marginLeft={5}
+              marginRight={5}
+              marginBottom={5}
+              marginTop={2}
             >
               <WhiteBorderTextField
                 id='search-input'
@@ -356,10 +346,10 @@ const ListingsPage = (props) => {
                 </Button>
               </Box>
             </Box>
-          </div>
-        </div>
+
+        {/* </div> */}
         <div className='listings-page-body'>
-          <Grid container spacing={2} className='listings-grid'>
+          <Grid container spacing={2} className='listings-grid' justifyContent={'space-between'}>
             {items.map((product) => (
               <Grid key={product.item.id} item>
                 <Link
@@ -372,7 +362,6 @@ const ListingsPage = (props) => {
             ))}
           </Grid>
         </div>
-      </div>
       <Footer />
     </>
   );
