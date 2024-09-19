@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import NavBar from '../components/Nav';
+import Switch from '@mui/material/Switch';
 import {
   TextField,
   FormControl,
@@ -18,7 +19,9 @@ import {
   Card,
   Grid,
   CardContent,
-  OutlinedInput
+  OutlinedInput,  
+  ToggleButton, 
+  ToggleButtonGroup
 } from '@mui/material';
 import '../assets/AddItemPage.css';
 import Footer from '../components/Footer.jsx';
@@ -79,6 +82,12 @@ const AddItemPage = () => {
   // const [imageDetails, setImageDetails] = useState([]); // New state for image details (name, price, quantity)
 
   const [items, setItems] = useState([]);
+
+  const [checked, setChecked] = React.useState(true);
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
 
   const {
     register,
@@ -168,7 +177,8 @@ const AddItemPage = () => {
                 price: item.price,
                 quantity: item.quantity,
                 category: item.category,
-                description: item.description
+                description: item.description,
+                status: item.status
               };
               resolve(newItem);
             };
@@ -183,9 +193,9 @@ const AddItemPage = () => {
         // console.log(newItems);
         listingData['listing_item'] = newItems
         // formData.append("items", JSON.stringify(newItems));
-        console.log("LISTING:", JSON.stringify(listingData));
+        console.log("SENDING LISTING:", JSON.stringify(listingData));
         await handlePostRequest2(listingData);
-        // clearForm();
+        clearForm();
       });
       
     } catch (error) {
@@ -233,6 +243,7 @@ const AddItemPage = () => {
       quantity: '',
       category: '',
       description: '',
+      status: ''
     }));
 
     setItems([...items, ...newItems]);
@@ -264,11 +275,19 @@ const AddItemPage = () => {
   };
 
   const handleImageDetailsChange = (index, field, value) => {
+    console.log("SWITCH VALUE TURNING TO:" + value);
     const updatedItems = items.map((item, idx) =>
       index === idx ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
   };
+
+  const [isDelisted, setIsDelisted] = useState(false);
+  const handleDelistToggle = () => {
+    setIsDelisted(!isDelisted);
+    // Add additional logic if you need to handle the de-listing process, like making an API call.
+  };
+  
 
   useEffect(() => {
     if (!image) {
@@ -476,8 +495,23 @@ const AddItemPage = () => {
             <Grid container spacing={2}>
               {imagePreviews.map((preview, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card>
+                  <Card   style={{
+    // padding: '20px',
+    // maxWidth: '1000px',
+    // height: '100%',
+    // width: '100%',
+    // margin: 'auto',
+    position: 'relative', // Make sure the card is the relative container
+  }}>
                     <CardContent>
+                      <Switch
+                        // defaultValue={}
+                        checked={items[index].status}
+                        onChange={(e) =>
+                          handleImageDetailsChange(index, 'status', e.target.checked)
+                        }
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
                       <img
                         src={preview}
                         alt={`image-${index}`}
@@ -487,6 +521,7 @@ const AddItemPage = () => {
                           objectFit: 'contain',
                         }}
                       />
+                        
                       <TextField
                             fullWidth
                             label='Item Name'
