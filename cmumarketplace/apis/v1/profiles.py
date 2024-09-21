@@ -36,16 +36,17 @@ def profiles_get_profile(request):
     response_data['listings'] = user_listings
     return Response(response_data, status=status.HTTP_200_OK)
 
+@validate_jwt
 def profiles_update_profile(request):
     if request.method == 'PUT':
-        token = request.headers.get('Authorization')
-        decoded_token = parse_jwt(token)
-        email = decoded_token['email']
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response({"message": "User unidentified."}, status=status.HTTP_401_UNAUTHORIZED)
-        
+        # token = request.headers.get('Authorization')
+        # decoded_token = parse_jwt(token)
+        # email = decoded_token['email']
+        # try:
+        #     user = User.objects.get(email=email)
+        # except User.DoesNotExist:
+        #     return Response({"message": "User unidentified."}, status=status.HTTP_401_UNAUTHORIZED)
+        user = get_authenticated_user(request)
         try:
             user_profile = UserProfile.objects.get(user= user)
         except UserProfile.DoesNotExist:
@@ -56,7 +57,7 @@ def profiles_update_profile(request):
             if serializer.is_valid():
                 serializer.save()
                 response_data = serializer.data
-                return Response(response_data, status=status.HTTP_201_CREATED)
+                return Response(response_data, status=status.HTTP_200_OK)
             return Response({"message": get_error_string(serializer)}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({"message": "could not process request"}, status=status.HTTP_400_BAD_REQUEST)
