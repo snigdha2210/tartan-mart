@@ -499,23 +499,25 @@ const handleDeleteImage = (index) => {
               >
                 <FormControlLabel
                   value='delivery'
-                  control={<Radio />}
+                  control={<Radio
+                    sx={{
+                      '&, &.Mui-checked': {
+                        color: theme.primary.red,
+                      },
+                    }}
+                  />}
                   label='Delivery'
-                  sx={{
-                    '.MuiRadio-root, .MuiRadio-checked': {
-                      color: theme.primary.red,
-                    },
-                  }}
                 />
                 <FormControlLabel
                   value='pickup'
-                  control={<Radio />}
+                  control={<Radio
+                    sx={{
+                      '&, &.Mui-checked': {
+                        color: theme.primary.red,
+                      },
+                    }}
+                  />}
                   label='Pickup'
-                  sx={{
-                    '.MuiRadio-root, .MuiRadio-checked': {
-                      color: theme.primary.red,
-                    },
-                  }}
                 />
               </RadioGroup>
             </div>

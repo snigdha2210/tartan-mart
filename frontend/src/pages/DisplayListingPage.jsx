@@ -73,7 +73,7 @@ const RedBorderSelect = styled(Select)`
   & .MuiInputLabel-root {
     color: #C41230; /* Change label color */
   }
-  & .MuiInputLabel-root .Mui-focused {
+  & .MuiInputLabel-root .Mui-focused .Mui-checked .MuiRadio-checked {
     color: #C41230;
   }
 `;
@@ -402,23 +402,25 @@ const DisplayListingPage = ({ match }) => {
               >
                 <FormControlLabel
                   value='delivery'
-                  control={<Radio />}
+                  control={<Radio
+                    sx={{
+                      '&, &.Mui-checked': {
+                        color: theme.primary.red,
+                      },
+                    }}
+                  />}
                   label='Delivery'
-                  sx={{
-                    '.MuiRadio-root, .MuiRadio-checked': {
-                      color: theme.primary.red,
-                    },
-                  }}
                 />
                 <FormControlLabel
                   value='pickup'
-                  control={<Radio />}
+                  control={<Radio
+                    sx={{
+                      '&, &.Mui-checked': {
+                        color: theme.primary.red,
+                      },
+                    }}
+                  />}
                   label='Pickup'
-                  sx={{
-                    '.MuiRadio-root, .MuiRadio-checked': {
-                      color: theme.primary.red,
-                    },
-                  }}
                 />
               </RadioGroup>
             </div>
