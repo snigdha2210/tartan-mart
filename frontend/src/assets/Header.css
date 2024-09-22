@@ -1,3 +1,7 @@
 .hero-section-image {
   padding: 5%;
 }
+
+.button:hover {
+  border-color: '#C41230';
+}

@@ -3,6 +3,11 @@
   width: 150px;
 }
 
+.category-image:hover {
+  height: 160px;
+  width: 160px;
+}
+
 .category-text {
   text-align: center;
   color: black;
@@ -13,8 +18,30 @@
   margin: 10px;
 }
 
+/* .category-list:hover {
+  height: auto;
+} */
+
+
 .div-category-image {
   padding: 40px;
   border-radius: 20%;
   border: 0.75px solid #00000030;
 }
+
+.grow {
+  padding: 5px 5px 5px 5px;
+  border-radius: 10px;
+  height: auto;
+  /* width: 22%; */
+  margin: 5px 1% 5px 1%;
+  float: left;
+  position: relative;
+  transition: height 0.5s;
+  -webkit-transition: height 0.5s;
+  text-align: center;
+  overflow: hidden;
+}
+/* .grow:hover {
+  height: 500px;
+} */
