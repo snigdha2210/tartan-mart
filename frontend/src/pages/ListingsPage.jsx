@@ -13,7 +13,9 @@ import {
   TextField,
   Box,
   Chip,
-  Typography
+  Typography,
+  Paper,
+  Divider
 } from '@mui/material';
 import ItemCard from '../components/ItemCard';
 import Loader from '../components/Loader';
@@ -66,6 +68,16 @@ const RedBorderSelect = styled(Select)`
   }
 `;
 
+const FilterBox = styled(Paper)`
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-top: 50px;
+`;
+
 const MenuProps = {
   PaperProps: {
     style: {
@@ -82,19 +94,19 @@ const ListingsPage = (props) => {
   const [loading, setLoading] = useState(true);
 
   const [minPriceValue, setMinPriceValue] = React.useState(0);
-  const [maxPriceValue, setMaxPriceValue] = React.useState(100);
+  const [maxPriceValue, setMaxPriceValue] = React.useState(1000);
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue);
   };
 
   const handleMinPriceInputChange = (event) => {
-    setMinPriceValue(Number(event.target.value));
-    setPriceRange([Number(event.target.value), maxPriceValue]);
+    setMinPriceValue(Number(event.target.value.substring(1)));
+    setPriceRange([Number(event.target.value.substring(1)), maxPriceValue]);
   };
   const handleMaxPriceInputChange = (event) => {
-    setMaxPriceValue(Number(event.target.value));
-    setPriceRange([minPriceValue, Number(event.target.value)]);
+    setMaxPriceValue(Number(event.target.value.substring(1)));
+    setPriceRange([minPriceValue, Number(event.target.value.substring(1))]);
   };
 
   const handleBlur = () => {
@@ -230,126 +242,116 @@ const ListingsPage = (props) => {
               marginTop={2}
             > <div className='page-title-text'>Find Products on TartanMart, Contact the Seller</div></Box>
 
-            <Box
-              display="flex"
-              flexDirection="column"
-              // alignItems="center"
-              padding="20px"
-              borderRadius="8px"
-              boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
-              backgroundColor="#fff"
-              marginLeft={5}
-              marginRight={5}
-              marginBottom={5}
-              marginTop={2}
-            >
-              <WhiteBorderTextField
-                id='search-input'
-                label='Search'
-                variant='outlined'
-                type='text'
-                placeholder='Search for products...'
-                value={searchStateVar}
-                onChange={(e) => setSearchStateVar(e.target.value)}
-                sx={{ marginBottom: 2, width: '100%' }}
-              />
-              <div style={{display:'flex'}}>
-              <FormControl sx={{ marginBottom: 2, marginRight: 5, width: '30%'}}>
-                <InputLabel id='multiple-checkbox-label'>Category</InputLabel>
-                <RedBorderSelect
-                  labelId='multiple-checkbox-label'
-                  id='multiple-checkbox'
-                  multiple
-                  value={categoryFilter}
-                  onChange={handleCategoryChange}
-                  MenuProps={MenuProps}
-                  SelectDisplayProps={{
-                    style: {
-                      whiteSpace: 'normal', // Prevent truncation by allowing text to wrap
-                    },
-                  }}
-                  input={<OutlinedInput label='Category'/>}
-                  InputLabelProps={{
-                    style: { color: '#C41230' }, // Change label color
-                  }}
-                  
-                  renderValue={(selected) => selected.join(', ')}
-                >
-                  {categories_tabs.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      <Checkbox checked={categoryFilter.includes(name)} />
-                      <ListItemText primary={name} />
-                    </MenuItem>
-                  ))}
-                </RedBorderSelect>
-              </FormControl>
-              <Box sx={{ width: '30%', marginBottom: 2 }}>
-              <div style={{display:'flex', alignContent:'space-between'}}>
-              <WhiteBorderTextField
-                id='search-input'
-                label='Min Price'
-                InputLabelProps={{
-                  style: { color: theme.primary.red },
-                }}
-                variant='outlined'
-                type='number'
-                placeholder='Search for products...'
-                value={minPriceValue.toString()}
-                onChange={handleMinPriceInputChange}
-                sx={{ marginBottom: 2, marginRight:2, borderColor: '#C41230', color: '#C41230'}}
-              />
-              <WhiteBorderTextField
-                id='search-input'
-                label='Max Price'
-                InputLabelProps={{
-                  style: { color: theme.primary.red },
-                }}
-                variant='outlined'
-                type='number'
-                placeholder='Search for products...'
-                value={maxPriceValue.toString()}
-                onChange={handleMaxPriceInputChange}
-                sx={{ marginBottom: 2,  }}
-              />
-              </div>
-                {/* <Typography variant="body2" color="textSecondary" align="center">
-                  ${priceRange[0]} - ${priceRange[1]}
-                </Typography> */}
-              </Box>
-              </div>
+      <FilterBox>
+        <Typography variant="h6" gutterBottom color={theme.primary.red}>
+          Filter Products
+        </Typography>
+        <Divider sx={{ marginBottom: 3 }} />
+        <Grid container spacing={3}>
 
-              {/* <Chip style={{marginTop:5, marginLeft:-3, width:'auto'}} label={categoryFilter.join(', ')} variant='outlined' /> */}
-              <Box display="flex" width="100%">
-                <Button
-                  variant='contained'
-                  onClick={handleSubmit}
-                  sx={{ backgroundColor: theme.primary.red, ':hover': {
-                    bgcolor: 'pink', // theme.palette.primary.main
-                    color: 'white',
-                  }, marginRight:2 }}
-                >
-                  Apply Filter
-                </Button>
-                <Button
+          {/* Search Field */}
+          <Grid item xs={12} md={4}>
+            <WhiteBorderTextField
+              label='Search for products...'
+              variant='outlined'
+              fullWidth
+              value={searchStateVar}
+              onChange={(e) => setSearchStateVar(e.target.value)}
+            />
+          </Grid>
+
+          {/* Category Filter */}
+          <Grid item xs={12} md={4}>
+            <FormControl fullWidth>
+              <InputLabel id='multiple-checkbox-label'>Category</InputLabel>
+              <RedBorderSelect
+                multiple
+                value={categoryFilter}
+                onChange={handleCategoryChange}
+                input={<OutlinedInput label="Category" />}
+                renderValue={(selected) => selected.join(', ')}
+              >
+                {categories_tabs.map((name) => (
+                  <MenuItem key={name} value={name}>
+                    <Checkbox checked={categoryFilter.includes(name)} />
+                    <ListItemText primary={name} />
+                  </MenuItem>
+                ))}
+              </RedBorderSelect>
+            </FormControl>
+          </Grid>
+
+          {/* Price Range Fields */}
+          <Grid item xs={12} md={4}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <WhiteBorderTextField
+                  label='Min Price'
                   variant='outlined'
-                  onClick={handleClearFilter}
-                  sx={{
-                    color: theme.primary.red,
-                    borderColor: theme.primary.red,
-                    ':hover': {
-                    bgcolor: 'pink', // theme.palette.primary.main
-                    color: 'white',
-                    borderColor: 'pink',
-                  },
-                  }}
-                >
-                  Clear Filter
-                </Button>
-              </Box>
-            </Box>
+                  fullWidth
+                  value={`$${minPriceValue}`}
+                  onChange={handleMinPriceInputChange}
+                />
+              </Grid>
+              
+              <Grid item xs={6}>
+                <WhiteBorderTextField
+                  label='Max Price'
+                  variant='outlined'
+                  fullWidth
+                  value={`$${maxPriceValue}`}
+                  onChange={handleMaxPriceInputChange}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
 
-        {/* </div> */}
+        </Grid>
+
+        <Divider sx={{ marginY: 1, width: 0}} />
+
+        {/* Action Buttons */}
+        <Grid container spacing={2} justifyContent="flex-end">
+          <Grid item>
+            <Button
+              variant='contained'
+              onClick={handleSubmit}
+              sx={{
+                backgroundColor: theme.primary.red,
+                color: 'white',
+                ':hover': {
+                  bgcolor: 'pink',
+                },
+              }}
+            >
+              Apply Filter
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant='outlined'
+              onClick={handleClearFilter}
+              sx={{
+                color: theme.primary.red,
+                borderColor: theme.primary.red,
+                ':hover': {
+                  bgcolor: 'pink',
+                  color: 'white',
+                  borderColor: 'pink',
+                },
+              }}
+            >
+              Clear Filter
+            </Button>
+          </Grid>
+        </Grid>
+      </FilterBox>
+
         <div className='listings-page-body'>
+
+        <Typography variant="h6" align="left" color="textSecondary" style={{ marginBottom: '30px' }}>
+            Showing {items.length} results
+          </Typography>
           <Grid container spacing={10} className='listings-grid'>
             {items.map((product) => (
               <Grid key={product.item.id} item>
