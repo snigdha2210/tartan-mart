@@ -35,6 +35,39 @@ import { deleteRequest, postRequest } from '../util/api';
 
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete'; // Import the Delete Icon
+
+const WhiteBorderTextField = styled(TextField)`
+  & label.Mui-focused {
+    color: #C41230;
+  }
+  & .MuiOutlinedInput-root {
+    & fieldset {
+      border-color: #C41230; /* Default border color */
+    }
+    &.Mui-focused fieldset {
+      border-color: #C41230; /* Border color when focused */
+    }
+  }
+`;
+
+const RedBorderSelect = styled(Select)`
+  & .MuiOutlinedInput-notchedOutline {
+    border-color: #C41230; /* Default border color */
+  }
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #C41230; /* Border color on hover */
+  }
+  &.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #C41230; /* Border color when focused */
+  }
+  & .MuiInputLabel-root {
+    color: #C41230; /* Change label color */
+  }
+  & .MuiInputLabel-root .Mui-focused {
+    color: #C41230;
+  }
+`;
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -84,6 +117,8 @@ const AddItemPage = () => {
   const [items, setItems] = useState([]);
 
   const [checked, setChecked] = React.useState(true);
+
+  const [formPage, setFormPage] = useState(1);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
@@ -243,7 +278,7 @@ const AddItemPage = () => {
       quantity: '',
       category: '',
       description: '',
-      status: ''
+      status: 'listed'
     }));
 
     setItems([...items, ...newItems]);
@@ -282,11 +317,33 @@ const AddItemPage = () => {
     setItems(updatedItems);
   };
 
+  const handleNext = () => {
+    setFormPage(formPage + 1);
+  };
+
+  const handleBack = () => {
+    setFormPage(formPage - 1);
+  };
+
+  const handleSwitchChange = (index, event) => {
+    const newStatus = event.target.checked ? 'listed' : 'delisted';
+    handleImageDetailsChange(index, 'status', newStatus);
+  };
+
   const [isDelisted, setIsDelisted] = useState(false);
   const handleDelistToggle = () => {
     setIsDelisted(!isDelisted);
     // Add additional logic if you need to handle the de-listing process, like making an API call.
   };
+
+
+// Handle delete of individual image
+const handleDeleteImage = (index) => {
+  const updatedItems = items.filter((_, idx) => idx !== index);
+  const updatedPreviews = imagePreviews.filter((_, idx) => idx !== index);
+  setItems(updatedItems);
+  setImagePreviews(updatedPreviews);
+};
   
 
   useEffect(() => {
@@ -325,7 +382,7 @@ const AddItemPage = () => {
               marginTop={2}
               marginBottom={5}
               
-            > <div className='page-title-text'>Create a Listing</div></Box>
+            > <div className='page-title-text'>Create a Listing ({formPage}/3)</div></Box>
         <Alert severity='error' sx={{ display: errorDisplay }}>
           {errorMessage}
         </Alert>
@@ -343,9 +400,17 @@ const AddItemPage = () => {
           }}
         >
           <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <i>*Listing Name and Description will only be visible to you. Only Sellers can manage their listings.</i>
-            <div className='add-item-input' style={{ marginBottom: '20px', marginTop: '20px' }}>
-              <TextField
+          {formPage == 1 ? <>
+
+            <Typography variant='h4' color='text.secondary' marginBottom={5}>
+            Listing Name
+            </Typography>
+          <i>*Listing Name will only be visible to you. Only Sellers can manage their listings.</i>
+            <div className='add-item-input' style={{ marginBottom: '20px', marginTop: '5px' }}>
+
+            
+
+              <WhiteBorderTextField
                 name='name'
                 fullWidth
                 label='Listing Name'
@@ -362,7 +427,7 @@ const AddItemPage = () => {
                 )}
               </Box>
             </div>
-            <div className='add-item-input' style={{ marginBottom: '20px' }}>
+            {/* <div className='add-item-input' style={{ marginBottom: '20px' }}>
               <TextField
                 fullWidth
                 label='Listing Description'
@@ -371,7 +436,7 @@ const AddItemPage = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 inputRef={register('description', {
                   required: true,
-                  minLength: 50,
+                  // minLength: 50,
                 })}
                 multiline
                 // rows={5}
@@ -392,9 +457,37 @@ const AddItemPage = () => {
                     </span>
                   )}
               </Box>
-            </div>
+            </div> */}
 
             <div
+              className='add-item-input'
+              style={{
+                display: 'flex',
+                marginBottom: '20px',
+                textAlign: 'center',
+              }}
+            >
+            <Button
+                onClick={handleNext}
+                variant='contained'
+                style={{
+                  background: theme.primary.red,
+                  width: '100%',
+                  margin: '5px',
+                }}
+              >
+                Next
+            </Button>
+            </div>
+
+            
+             </> : <> </>}
+          
+            {formPage == 2 ? <>
+            <Typography variant='h4' color='text.secondary' marginBottom={2}>
+            How do buyers receive the items?
+            </Typography>
+             <div
               className='delivery-pickup-input'
               style={{ marginBottom: '20px' }}
             >
@@ -408,11 +501,21 @@ const AddItemPage = () => {
                   value='delivery'
                   control={<Radio />}
                   label='Delivery'
+                  sx={{
+                    '.MuiRadio-root, .MuiRadio-checked': {
+                      color: theme.primary.red,
+                    },
+                  }}
                 />
                 <FormControlLabel
                   value='pickup'
                   control={<Radio />}
                   label='Pickup'
+                  sx={{
+                    '.MuiRadio-root, .MuiRadio-checked': {
+                      color: theme.primary.red,
+                    },
+                  }}
                 />
               </RadioGroup>
             </div>
@@ -425,7 +528,7 @@ const AddItemPage = () => {
                       className='delivery-time'
                       style={{ marginBottom: '20px' }}
                     >
-                      <TextField
+                      <WhiteBorderTextField
                         min='1'
                         fullWidth
                         label='Delivery Within (days)'
@@ -444,7 +547,7 @@ const AddItemPage = () => {
                       className='pickup-address'
                       style={{ marginBottom: '20px' }}
                     >
-                      <TextField
+                      <WhiteBorderTextField
                         min='1'
                         fullWidth
                         label='Pickup Address'
@@ -458,8 +561,51 @@ const AddItemPage = () => {
                 }
               })()}
 
-            </section>
+            </section> 
 
+            <div
+              className='add-item-input'
+              style={{
+                display: 'flex',
+                marginBottom: '20px',
+                textAlign: 'center',
+              }}
+            >
+            <Button
+                onClick={handleBack}
+                variant='contained'
+                style={{
+                  background: 'white',
+                  width: '100%',
+                  margin: '5px',
+                  color: theme.primary.red,
+                  borderColor: theme.primary.red,
+                  borderWidth:1,
+                  borderStyle: 'solid',
+                  boxShadow: 'none'
+                }}
+              >
+                Back
+              </Button>
+            <Button
+                onClick={handleNext}
+                variant='contained'
+                style={{
+                  background: theme.primary.red,
+                  width: '100%',
+                  margin: '5px',
+                }}
+              >
+                Next
+            </Button>
+            </div>
+            
+            </> : <> </>}
+
+            {formPage == 3 ? <>
+            <Typography variant='h4' color='text.secondary' marginBottom={2}>
+            Add your items
+            </Typography>
             <Button
               component="label"
               role={undefined}
@@ -476,7 +622,7 @@ const AddItemPage = () => {
                 boxShadow: 'none'
               }}
             >
-              Add Images
+              Add Items
               <VisuallyHiddenInput
                 type="file"
                 onChange={(e) => {
@@ -491,98 +637,88 @@ const AddItemPage = () => {
             
             <div className='add-item-input' style={{ marginBottom: '20px' }}>
 
-            {/* Display image previews */}
             <Grid container spacing={2}>
-              {imagePreviews.map((preview, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card   style={{
-    // padding: '20px',
-    // maxWidth: '1000px',
-    // height: '100%',
-    // width: '100%',
-    // margin: 'auto',
-    position: 'relative', // Make sure the card is the relative container
-  }}>
-                    <CardContent>
-                      <Switch
-                        // defaultValue={}
-                        checked={items[index].status}
-                        onChange={(e) =>
-                          handleImageDetailsChange(index, 'status', e.target.checked)
-                        }
-                        inputProps={{ 'aria-label': 'controlled' }}
-                      />
-                      <img
-                        src={preview}
-                        alt={`image-${index}`}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'contain',
-                        }}
-                      />
-                        
-                      <TextField
-                            fullWidth
-                            label='Item Name'
-                            margin='normal'
-                            onChange={(e) =>
-                              handleImageDetailsChange(index, 'name', e.target.value)
-                            }
-                          />
-                      <TextField
-                            fullWidth
-                            label='Image Description'
-                            margin='normal'
-                            onChange={(e) =>
-                              handleImageDetailsChange(index, 'description', e.target.value)
-                            }
-                          />
-                          <TextField
-                            fullWidth
-                            label='Price'
-                            type='number'
-                            margin='normal'
-                            onChange={(e) =>
-                              handleImageDetailsChange(index, 'price', e.target.value)
-                            }
-                          />
-                          <TextField
-                            fullWidth
-                            label='Quantity'
-                            type='number'
-                            margin='normal'
-                            onChange={(e) =>
-                              handleImageDetailsChange(index, 'quantity', e.target.value)
-                            }
-                          />
-                        <FormControl fullWidth margin='normal'>
-                          <InputLabel>Category</InputLabel>
-                          <Select
-                            // labelId='multiple-checkbox-label2'
-                            // id='multiple-checkbox2'
-                            input={<OutlinedInput label='Category' />}
-                            value={items[index].category.charAt(0).toUpperCase() + items[index].category.substring(1).toLowerCase()}
-                            onChange={(e) => {
-                                setCategory(e.target.value);
-                                handleImageDetailsChange(index, 'category', e.target.value.toLowerCase());
-                              }
-                            }
-                          >
-                            {categories_tabs.map((name) => (
-                              <MenuItem key={name} value={name}>
-                                <ListItemText primary={name} />
-                              </MenuItem>
-                            ))}
-                            <MenuItem value='other'>Other</MenuItem>
-                          </Select>
-                        </FormControl>
-                      
-                    </CardContent>
-                  </Card>
-                </Grid>
+  {imagePreviews.map((preview, index) => (
+    <Grid item xs={12} sm={6} md={4} key={index}>
+      <Card style={{ position: 'relative' }}>
+        <CardContent>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Switch
+              checked={items[index].status === 'listed'}
+              onChange={(e) => handleSwitchChange(index, e)}
+              inputProps={{ 'aria-label': 'controlled' }}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: theme.primary.red,
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: theme.primary.red,
+                },
+              }}
+            />
+            <DeleteIcon
+              onClick={() => handleDeleteImage(index)}
+              style={{ cursor: 'pointer', color: theme.primary.red }}
+            />
+          </div>
+          <img
+            src={preview}
+            alt={`image-${index}`}
+            style={{
+              width: '100%',
+              height: '200px',
+              objectFit: 'contain',
+            }}
+          />
+          <WhiteBorderTextField
+            fullWidth
+            label='Item Name'
+            margin='normal'
+            onChange={(e) => handleImageDetailsChange(index, 'name', e.target.value)}
+          />
+          <WhiteBorderTextField
+            fullWidth
+            label='Item Description'
+            margin='normal'
+            onChange={(e) => handleImageDetailsChange(index, 'description', e.target.value)}
+          />
+          <WhiteBorderTextField
+            fullWidth
+            label='Price'
+            type='number'
+            margin='normal'
+            onChange={(e) => handleImageDetailsChange(index, 'price', e.target.value)}
+          />
+          <WhiteBorderTextField
+            fullWidth
+            label='Quantity'
+            type='number'
+            margin='normal'
+            onChange={(e) => handleImageDetailsChange(index, 'quantity', e.target.value)}
+          />
+          <FormControl fullWidth margin='normal'>
+          <InputLabel id='multiple-checkbox-label'>Category</InputLabel>
+            <RedBorderSelect
+              input={<OutlinedInput label='Category' />}
+              InputLabelProps={{
+                style: { color: '#C41230' }, // Change label color
+              }}
+              value={items[index].category}
+              onChange={(e) => handleImageDetailsChange(index, 'category', e.target.value)}
+            >
+              {categories_tabs.map((name) => (
+                <MenuItem key={name} value={name}>
+                  <ListItemText primary={name} />
+                </MenuItem>
               ))}
-            </Grid>
+              <MenuItem value='other'>Other</MenuItem>
+            </RedBorderSelect>
+          </FormControl>
+        </CardContent>
+      </Card>
+    </Grid>
+  ))}
+</Grid>
             
             </div>
             
@@ -595,7 +731,7 @@ const AddItemPage = () => {
               }}
             >
               <Button
-                onClick={handleOpenDelete}
+                onClick={handleBack}
                 variant='contained'
                 style={{
                   background: 'white',
@@ -608,7 +744,7 @@ const AddItemPage = () => {
                   boxShadow: 'none'
                 }}
               >
-                Delete
+                Back
               </Button>
               <Button
                 onClick={handleOpenSubmit}
@@ -746,6 +882,10 @@ const AddItemPage = () => {
                 </Box>
               </Modal>
             </div>
+             </> : <> </>}
+            
+
+            
           </form>
         </Card>
       <Footer />
