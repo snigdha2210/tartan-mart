@@ -36,6 +36,7 @@ import { deleteRequest, postRequest } from '../util/api';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete'; // Import the Delete Icon
+import { useNavigate } from 'react-router-dom';
 
 const WhiteBorderTextField = styled(TextField)`
   & label.Mui-focused {
@@ -83,6 +84,7 @@ const VisuallyHiddenInput = styled('input')({
 
 const AddItemPage = () => {
   const theme = useTheme();
+  const navigateTo = useNavigate();
   const [itemName, setItemName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -146,21 +148,41 @@ const AddItemPage = () => {
   };
 
   const validateFormData = () => {
-    if (!itemName) throw new Error('No name set');
-    // if (!description || description.length < 30)
-    //   throw new Error('Invalid or too short description');
-    if (!deliveryPickupOption) throw new Error('Delivery or pickup not set');
+    if (!itemName) {
+      setFormPage(1);
+      throw new Error('Please enter a Listing Name');
+    }
+    if (!deliveryPickupOption) {
+      setFormPage(2);
+      throw new Error('Please choose how buyers can get the items');
+    }
     if (
       deliveryPickupOption === 'delivery' &&
-      (!deliveryTime || deliveryTime === '')
-    )
-      throw new Error('Set the estimated delivery time in days');
+      (!deliveryTime || deliveryTime === '' || Number(deliveryTime) <= 0)
+    ) {
+      try {
+        let deliveryTimeNumber = Number(deliveryTime);
+        if (deliveryTimeNumber <= 0) {
+          setFormPage(2);
+          throw new Error('Delivery time must be more than 0 days');
+        }
+      } catch {
+        setFormPage(2);
+        throw new Error('Delivery time must be a number and more than 0 days');
+      }
+      setFormPage(2);
+      throw new Error('Please set the estimated delivery time in days');
+    }
     if (
       deliveryPickupOption === 'pickup' &&
       (!pickupAddress || pickupAddress === '')
-    )
-      throw new Error('Include the pickup address');
-    if (items.length === 0) throw new Error('No items added');
+    ) {
+      setFormPage(2);
+      throw new Error('Please enter a pickup address');
+    }
+    if (items.length === 0) {
+      throw new Error('Please add at least 1 item');
+    }
 
     items.forEach((item, index) => {
       if (!item.image || item.image.size <= 0)
@@ -210,9 +232,9 @@ const AddItemPage = () => {
                 image_b64: reader.result,
                 price: item.price,
                 quantity: item.quantity,
-                category: item.category,
+                category: item.category.toLowerCase(),
                 description: item.description,
-                status: item.status,
+                current_status: item.current_status,
               };
               resolve(newItem);
             };
@@ -230,10 +252,12 @@ const AddItemPage = () => {
         console.log('SENDING LISTING:', JSON.stringify(listingData));
         await handlePostRequest2(listingData);
         clearForm();
+        navigateTo('/my-profile');
       });
     } catch (error) {
       setErrorDisplay('show');
       setErrorMessage(error.message);
+      setOpenSubmit(false);
     }
   };
 
@@ -262,7 +286,7 @@ const AddItemPage = () => {
       if (error.message) {
         setErrorMessage(error.message);
       }
-      return;
+      // return;
     }
     clearForm();
   };
@@ -279,7 +303,7 @@ const AddItemPage = () => {
       quantity: '',
       category: '',
       description: '',
-      status: 'listed',
+      current_status: 'listed',
     }));
 
     setItems([...items, ...newItems]);
@@ -327,7 +351,7 @@ const AddItemPage = () => {
 
   const handleSwitchChange = (index, event) => {
     const newStatus = event.target.checked ? 'listed' : 'delisted';
-    handleImageDetailsChange(index, 'status', newStatus);
+    handleImageDetailsChange(index, 'current_status', newStatus);
   };
 
   const [isDelisted, setIsDelisted] = useState(false);
@@ -383,7 +407,16 @@ const AddItemPage = () => {
         {' '}
         <div className="page-title-text">Create a Listing ({formPage}/3)</div>
       </Box>
-      <Alert severity="error" sx={{ display: errorDisplay }}>
+      <Alert
+        severity="error"
+        sx={{
+          display: errorDisplay,
+          marginLeft: 5,
+          marginRight: 5,
+          // marginTop: 2,
+          marginBottom: 2,
+        }}
+      >
         {errorMessage}
       </Alert>
       <Card
@@ -395,6 +428,7 @@ const AddItemPage = () => {
           // border: '2px solid #ccc',
           maxWidth: '1000px',
           height: '100%',
+          minHeight: 400,
           width: '100%',
           margin: 'auto',
         }}
@@ -511,7 +545,7 @@ const AddItemPage = () => {
                         style={{ marginBottom: '20px' }}
                       >
                         <WhiteBorderTextField
-                          min="1"
+                          min={1}
                           fullWidth
                           label="Delivery Within (days)"
                           value={deliveryTime}
@@ -633,7 +667,7 @@ const AddItemPage = () => {
                             }}
                           >
                             <Switch
-                              checked={items[index].status === 'listed'}
+                              checked={items[index].current_status === 'listed'}
                               onChange={e => handleSwitchChange(index, e)}
                               inputProps={{ 'aria-label': 'controlled' }}
                               sx={{
