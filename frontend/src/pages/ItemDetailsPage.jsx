@@ -138,10 +138,10 @@ const ItemDetailsPage = () => {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell>
+                <TableCell sx={{ width: '40%' }}>
                   <Typography variant="h6">Product</Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ width: '60%' }}>
                   <Typography variant="body1">{item.name}</Typography>
                 </TableCell>
               </TableRow>
