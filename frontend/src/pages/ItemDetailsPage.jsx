@@ -81,6 +81,10 @@ const ItemDetailsPage = () => {
       }
     };
     getItemOnItemDetailsPage(id);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
   }, [isLoggedIn, id]);
 
   if (loading) {
@@ -127,7 +131,7 @@ const ItemDetailsPage = () => {
           component="img"
           image={item.image == undefined || item.image == null ? "" : item.image}
           alt={item.name}
-          sx={{ width: '100%', maxWidth: '800px', height: 'auto', objectFit: 'contain', marginBottom: '20px' }}
+          sx={{ width: '100%', maxWidth: '800px', height: '400px', objectFit: 'contain', marginBottom: '20px' }}
         />
 
         <TableContainer>
