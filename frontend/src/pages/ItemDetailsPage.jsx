@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Carousel from 'react-material-ui-carousel';  // Import the Carousel
 import Footer from '../components/Footer';
 import NavBar from '../components/Nav';
 import Loader from '../components/Loader';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Typography, Box, CardMedia, Divider, Chip, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
+import { Button, Typography, Box, CardMedia, Divider, Chip, Table, TableBody, TableCell, TableContainer, TableRow, Link } from '@mui/material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-
 import { fetchItem, updateSelectedItem } from '../store/actions/actions';
 import { getRequestAuthed } from '../util/api';
 import { useTheme } from '@emotion/react';
-
 import FormattedDate from '../components/FormattedDate.jsx';
 import API_ENDPOINTS from '../constants/apiEndpoints.js';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import ItemCard from '../components/ItemCard';
+import { useNavigate } from 'react-router-dom';
 
 function renderDeliveryPickUpDetails({ item }) {
   return (
@@ -23,7 +24,6 @@ function renderDeliveryPickUpDetails({ item }) {
       )}
       {item.delivery_or_pickup === 'delivery' && (
         <Typography>
-          {/* <LocalShippingIcon style={{ marginRight: 8 }} /> */}
           Delivered to you in {item.delivery_time} days
         </Typography>
       )}
@@ -33,12 +33,14 @@ function renderDeliveryPickUpDetails({ item }) {
 
 const ItemDetailsPage = () => {
   const theme = useTheme();
+  const navigateTo = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const { id } = useParams();
   const { username, email, isLoggedIn } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const [extraItems, setExtraItems] = useState([]);
 
   const { selectedItem } = useSelector((state) => state.items);
   let item = null;
@@ -48,12 +50,29 @@ const ItemDetailsPage = () => {
     ({ item, seller } = selectedItem);
   }
 
+  function groupIntoChunks(array, chunkSize) {
+    const output = [];
+    let currentChunk = [];
+  
+    array.forEach((item, index) => {
+      currentChunk.push(item);
+  
+      if ((index + 1) % chunkSize === 0 || index === array.length - 1) {
+        output.push(currentChunk);
+        currentChunk = [];
+      }
+    });
+  
+    return output;
+  }
+
   useEffect(() => {
     const getItemOnItemDetailsPage = async (id) => {
       try {
         const response = await getRequestAuthed(API_ENDPOINTS.getItemById + id);
         if (response) {
           dispatch(updateSelectedItem(response));
+          setExtraItems(response.extra_items)
         }
       } catch (error) {
         console.error('Error in GET request:', error);
@@ -62,28 +81,11 @@ const ItemDetailsPage = () => {
       }
     };
     getItemOnItemDetailsPage(id);
-  }, [isLoggedIn]);
-
-
-
-  console.log("ITEM:" + JSON.stringify(item));
-
-  const handleContactSeller = () => {
-    const whatsappUrl = `https://wa.me/${seller.seller_mobile_number}`;
-    window.open(whatsappUrl, '_blank');
-  };
+  }, [isLoggedIn, id]);
 
   if (loading) {
     return <Loader />;
   }
-
-  // if (!username) {
-  //   return <Loader />;
-  // }
-
-  // if (!email) {
-  //   return <Loader />;
-  // }
 
   if (!selectedItem) {
     return <Loader />;
@@ -92,6 +94,13 @@ const ItemDetailsPage = () => {
   if (!item) {
     return <Loader />;
   }
+
+  const handleContactSeller = () => {
+    const whatsappUrl = `https://wa.me/${seller.seller_mobile_number}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  
 
   return (
     <>
@@ -195,24 +204,85 @@ const ItemDetailsPage = () => {
                   <Typography variant="body1">{seller.seller_name == null || seller.seller_name == undefined ? "" : seller.seller_name}</Typography>
                 </TableCell>
               </TableRow></> : <></>}
-              
             </TableBody>
           </Table>
         </TableContainer>
-        {isLoggedIn ? <>        <Button
-          variant="contained"
-          onClick={handleContactSeller}
-          startIcon={<WhatsAppIcon />}
-          sx={{
-            background: theme.primary.red,
-            width: '100%',
-            mt: 2,
-            mb: 2,
-          }}
-        >
-          Contact Seller on WhatsApp
-        </Button></> : <></>}
 
+        {isLoggedIn && (
+          <Button
+            variant="contained"
+            onClick={handleContactSeller}
+            startIcon={<WhatsAppIcon />}
+            sx={{
+              background: theme.primary.red,
+              width: '100%',
+              mt: 2,
+              mb: 2,
+            }}
+          >
+            Contact Seller on WhatsApp
+          </Button>
+        )}
+    </Box>
+        {/* <Divider sx={{ width: '100%', marginTop: '40px', marginBottom: '20px' }} /> */}
+        <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          // justifyContent: 'center',
+          // alignItems: 'center',
+          margin: '20px auto',
+          maxWidth: '1200px',
+          width: '100%',
+          // minHeight: '70vh',
+          border: '1px solid #ddd',
+          padding: '20px',
+          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        {/* Carousel Section */}
+        <Typography variant="h5" component="div" alignItems={'left'} align='left' 
+        style={{'justifySelf':'left'}}>
+          This seller is also selling...
+        </Typography>
+        <Carousel
+          sx={{
+            width: '100%',
+            // maxWidth: '800px',
+            margin: 'auto',
+          }}
+          animation="slide"
+          duration={500}
+          indicators={true}
+        >
+          {groupIntoChunks(extraItems, 3).map((group, groupIndex) => (
+            <div style={{'display': 'flex'}}>
+            {group.map((extraItem, extraItemIndex) => (
+            
+            <div style={{'margin': 10,}}>
+            <Link
+                  style={{ textDecoration: 'none' }}
+                  to={`item-detail/${extraItem.id}`}
+            >
+                  
+                
+            <ItemCard
+              key={`${groupIndex}${extraItemIndex}`}
+              product={extraItem}
+              height="100"
+              onItemClick={() => {
+                // console.log('Clicked on:', extraItem);
+                navigateTo(`/listings/item-detail/${extraItem.id}`);
+              }
+              }
+            />
+            </Link>
+            </div>
+            
+            ))}
+            </div>
+          ))}
+        </Carousel>
       </Box>
       <Footer />
     </>

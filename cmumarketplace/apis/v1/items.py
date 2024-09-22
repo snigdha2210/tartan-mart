@@ -145,21 +145,19 @@ def items_get_item(request, id):
         elif item_data['delivery_or_pickup'] == 'pickup':
             item_data['pickup_address'] = user_listing.pickup_address
         
-        # seller_data = {
-        #     'seller_id': item.listing.user.id,
-        #     'seller_name': item.listing.user.name,
-        #     'seller_email': item.listing.user.email,
-        #     'seller_mobile_number': user_profile.mobile if user_profile else None,
-        # }
+        # Fetch extra items by the same user
+        extra_items = Item.objects.filter(listing__user=user_listing.user, current_status='listed').exclude(pk=item.pk)
+        extra_items_data = ItemSerializer(extra_items, many=True).data
 
         response_data = {
             'item': item_data,
-            # 'seller': seller_data,
+            'extra_items': extra_items_data,  # Add the extra items here
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
     except Item.DoesNotExist:
         return Response({"message": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
+
     
 @validate_jwt
 def items_get_item_authed(request, id):
@@ -184,9 +182,14 @@ def items_get_item_authed(request, id):
             'seller_mobile_number': user_profile.mobile if user_profile else None,
         }
 
+        # Fetch extra items by the same user
+        extra_items = Item.objects.filter(listing__user=user_listing.user, current_status='listed').exclude(pk=item.pk)
+        extra_items_data = ItemSerializer(extra_items, many=True).data
+
         response_data = {
             'item': item_data,
             'seller': seller_data,
+            'extra_items': extra_items_data,  # Add the extra items here
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
