@@ -365,6 +365,7 @@ const ListingsPage = props => {
               <Link
                 style={{ textDecoration: 'none' }}
                 to={`item-detail/${product.item.id}`}
+                target="_blank"
               >
                 <ItemCard product={product.item} height={'180px'} />
               </Link>
