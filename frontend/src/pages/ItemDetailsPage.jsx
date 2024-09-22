@@ -218,6 +218,13 @@ const ItemDetailsPage = () => {
               width: '100%',
               mt: 2,
               mb: 2,
+              // color: theme.primary.red,
+              borderColor: theme.primary.red,
+              ':hover': {
+              bgcolor: 'pink', // theme.palette.primary.main
+              color: 'white',
+              borderColor: 'pink',
+              },
             }}
           >
             Contact Seller on WhatsApp

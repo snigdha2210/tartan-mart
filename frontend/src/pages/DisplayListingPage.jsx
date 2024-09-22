@@ -46,6 +46,38 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+const WhiteBorderTextField = styled(TextField)`
+  & label.Mui-focused {
+    color: #C41230;
+  }
+  & .MuiOutlinedInput-root {
+    & fieldset {
+      border-color: #C41230; /* Default border color */
+    }
+    &.Mui-focused fieldset {
+      border-color: #C41230; /* Border color when focused */
+    }
+  }
+`;
+
+const RedBorderSelect = styled(Select)`
+  & .MuiOutlinedInput-notchedOutline {
+    border-color: #C41230; /* Default border color */
+  }
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #C41230; /* Border color on hover */
+  }
+  &.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #C41230; /* Border color when focused */
+  }
+  & .MuiInputLabel-root {
+    color: #C41230; /* Change label color */
+  }
+  & .MuiInputLabel-root .Mui-focused {
+    color: #C41230;
+  }
+`;
+
 const DisplayListingPage = ({ match }) => {
   const theme = useTheme();
   
@@ -83,6 +115,8 @@ const DisplayListingPage = ({ match }) => {
 
   const [items, setItems] = useState([]);
 
+  const [labelColor, setLabelColor] = useState('');
+
   const {
     register,
     handleSubmit,
@@ -98,6 +132,10 @@ const DisplayListingPage = ({ match }) => {
       index === idx ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
+  };
+
+  const handleLabelColor = () => {
+    setLabelColor('#C41230');
   };
 
   const handleImageChange = (event) => {
@@ -307,7 +345,7 @@ const DisplayListingPage = ({ match }) => {
         >
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='add-item-input' style={{ marginBottom: '20px' }}>
-              <TextField
+              <WhiteBorderTextField
                 name='name'
                 fullWidth
                 label='Listing Name'
@@ -323,8 +361,8 @@ const DisplayListingPage = ({ match }) => {
                 )}
               </Box>
             </div>
-            <div className='add-item-input' style={{ marginBottom: '20px' }}>
-              <TextField
+            {/* <div className='add-item-input' style={{ marginBottom: '20px' }}>
+              <WhiteBorderTextField
                 fullWidth
                 label='Listing Description'
                 name='description'
@@ -350,7 +388,7 @@ const DisplayListingPage = ({ match }) => {
                     </span>
                   )}
               </Box>
-            </div>
+            </div> */}
 
             <div
               className='delivery-pickup-input'
@@ -366,11 +404,21 @@ const DisplayListingPage = ({ match }) => {
                   value='delivery'
                   control={<Radio />}
                   label='Delivery'
+                  sx={{
+                    '.MuiRadio-root, .MuiRadio-checked': {
+                      color: theme.primary.red,
+                    },
+                  }}
                 />
                 <FormControlLabel
                   value='pickup'
                   control={<Radio />}
                   label='Pickup'
+                  sx={{
+                    '.MuiRadio-root, .MuiRadio-checked': {
+                      color: theme.primary.red,
+                    },
+                  }}
                 />
               </RadioGroup>
             </div>
@@ -383,7 +431,7 @@ const DisplayListingPage = ({ match }) => {
                       className='delivery-time'
                       style={{ marginBottom: '20px' }}
                     >
-                      <TextField
+                      <WhiteBorderTextField
                         min='1'
                         fullWidth
                         label='Delivery Within (days)'
@@ -402,7 +450,7 @@ const DisplayListingPage = ({ match }) => {
                       className='pickup-address'
                       style={{ marginBottom: '20px' }}
                     >
-                      <TextField
+                      <WhiteBorderTextField
                         min='1'
                         fullWidth
                         label='Pickup Address'
@@ -434,7 +482,7 @@ const DisplayListingPage = ({ match }) => {
                 boxShadow: 'none'
               }}
             >
-              Add Images
+              Add Items
               <VisuallyHiddenInput
                 type="file"
                 onChange={(e) => {
@@ -465,27 +513,27 @@ const DisplayListingPage = ({ match }) => {
                           objectFit: 'contain',
                         }}
                       />
-                      <TextField
+                      <WhiteBorderTextField
                             fullWidth
-                            label={items[index].name || 'Item Name'}
+                            label={'Item Name'}
                             margin='normal'
                             value={items[index].name}
                             onChange={(e) =>
                               handleImageDetailsChange(index, 'name', e.target.value)
                             }
                           />
-                      <TextField
+                      <WhiteBorderTextField
                             fullWidth
-                            label={items[index].description || 'Image Description'}
+                            label={'Item Description'}
                             margin='normal'
                             value={items[index].description}
                             onChange={(e) =>
                               handleImageDetailsChange(index, 'description', e.target.value)
                             }
                           />
-                          <TextField
+                          <WhiteBorderTextField
                             fullWidth
-                            label={items[index].price || 'Price'}
+                            label={'Price'}
                             type='number'
                             margin='normal'
                             value={items[index].price}
@@ -493,9 +541,9 @@ const DisplayListingPage = ({ match }) => {
                               handleImageDetailsChange(index, 'price', e.target.value)
                             }
                           />
-                          <TextField
+                          <WhiteBorderTextField
                             fullWidth
-                            label={items[index].quantity || 'Quantity'}
+                            label={'Quantity'}
                             type='number'
                             margin='normal'
                             value={items[index].quantity}
@@ -504,11 +552,12 @@ const DisplayListingPage = ({ match }) => {
                             }
                           />
                         <FormControl fullWidth margin='normal'>
-                          <InputLabel>Category</InputLabel>
-                          <Select
-                            // labelId='multiple-checkbox-label2'
-                            // id='multiple-checkbox2'
+                        <InputLabel id='multiple-checkbox-label'>Category</InputLabel>
+                          <RedBorderSelect
                             input={<OutlinedInput label='Category' />}
+                            // InputLabelProps={{
+                            //   style: { color: labelColor,  }, // Change label color
+                            // }}
                             value={items[index].category.charAt(0).toUpperCase() + items[index].category.substring(1).toLowerCase()}
                             onChange={(e) => {
                                 setCategory(e.target.value);
@@ -522,7 +571,7 @@ const DisplayListingPage = ({ match }) => {
                               </MenuItem>
                             ))}
                             <MenuItem value='other'>Other</MenuItem>
-                          </Select>
+                          </RedBorderSelect>
                         </FormControl>
                       
                     </CardContent>
