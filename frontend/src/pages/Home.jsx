@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 import '@fontsource/inter';
 import { useSelector } from 'react-redux';
 import '../assets/Home.css';
-import {categories} from "../constants/constants.jsx";
+import { categories } from '../constants/constants.jsx';
 
 const styles = {
   subheader: {
@@ -22,10 +22,8 @@ const styles = {
   },
 };
 
-
-
 const Home = () => {
-  const { username, email, isLoggedIn } = useSelector((state) => {
+  const { username, email, isLoggedIn } = useSelector(state => {
     return state.auth;
   });
 
@@ -34,17 +32,17 @@ const Home = () => {
       <NavBar
         loggedIn={isLoggedIn}
         accountDetails={{ username: username, email: email }}
-        name = "Home"
+        name="Home"
       />
       <Header />
-      <div className='browse-product'>
+      <div className="browse-product">
         <h2 style={styles.subheader}>Browse Products</h2>
-        <Grid container spacing={2} justifyContent='center'>
-          {categories.map((category) => (
+        <Grid container spacing={2} justifyContent="center">
+          {categories.map(category => (
             <Grid key={category.id} item>
               <Link
                 style={{ textDecoration: 'none' }}
-                to='/listings'
+                to="/listings"
                 state={{ categories: [category.name] }}
               >
                 <CategoryCard category={category} />

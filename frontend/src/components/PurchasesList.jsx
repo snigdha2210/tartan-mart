@@ -20,34 +20,34 @@ function renderItem({ purchase, itemClickHandler }) {
         }}
       >
         <FormattedDate date={purchase.order_date} />
-        <Typography variant='body1'>
+        <Typography variant="body1">
           # of Items: {purchase.items.length}
         </Typography>
-        <Typography variant='body1'>Total: ${purchase.total_price}</Typography>
-        <Chip label={purchase.payment_status} variant='outlined' />
+        <Typography variant="body1">Total: ${purchase.total_price}</Typography>
+        <Chip label={purchase.payment_status} variant="outlined" />
       </Card>
     </ListItem>
   );
 }
 const PurchasesList = ({ purchases, withUpdate }) => {
   console.log(purchases);
-  purchases.map((purchase) => console.log(purchase));
+  purchases.map(purchase => console.log(purchase));
   const navigateTo = useNavigate();
 
   const [errorMessage, setErrorMessage] = useState('');
   const [errorDisplay, setErrorDisplay] = useState('none');
 
-  const itemClickHandler = (id) => {
+  const itemClickHandler = id => {
     navigateTo(`/order-details/${id}`);
   };
   console.log(purchases);
   return (
     <>
-      <Alert sx={{ display: errorDisplay }} severity='error'>
+      <Alert sx={{ display: errorDisplay }} severity="error">
         {errorMessage}
       </Alert>
       <List dense={true} sx={{ backgroundColor: 'white' }}>
-        {purchases.map((purchase) =>
+        {purchases.map(purchase =>
           renderItem({
             purchase,
             itemClickHandler,

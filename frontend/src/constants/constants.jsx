@@ -16,26 +16,24 @@ export const categories = [
     image:
       // 'https://img.icons8.com/badges/48/multiple-devices.png'
       electronics,
-      // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/monitor.png',
+    // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/monitor.png',
   },
   {
     id: 3,
     name: 'Furniture',
-    image:
-      furniture,
-      // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/furniture.png',
+    image: furniture,
+    // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/furniture.png',
   },
   {
     id: 4,
     name: 'Clothing',
-    image:
-    clothing,
-      // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/clothes.png',
+    image: clothing,
+    // 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/clothes.png',
   },
   // {
   //   id: 5,
   //   name: 'Home',
-  //   image: 
+  //   image:
   //   // home,
   //   'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/home.png',
   // },

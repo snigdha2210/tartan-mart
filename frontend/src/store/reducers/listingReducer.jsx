@@ -1,7 +1,7 @@
 // src/store/reducers/profileReducer.js
 
 import * as actionTypes from '../actions/actionTypes';
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/lib/storage';
 
 const initialState = {
   my_listings: [],
@@ -21,10 +21,10 @@ const listingReducer = (state = initialState, action) => {
         my_orders: action.my_orders,
       };
     case actionTypes.UPDATE_PROFILE:
-        return {
-            ...state,
-            profile: action.my_profile,
-        };
+      return {
+        ...state,
+        profile: action.my_profile,
+      };
     case actionTypes.CLEAR_PROFILE:
       //storage.removeItem('persist:root');
       return initialState;

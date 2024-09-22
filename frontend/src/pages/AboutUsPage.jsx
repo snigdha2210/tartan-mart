@@ -8,15 +8,14 @@ import '../assets/AboutUsPage.css';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import Link from '@mui/material/Link';
 
-//background image 
+//background image
 const image =
   'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/about-us.svg';
 
 // About Us Page component
 const AboutUsPage = () => {
-
   // Retrieve user authentication status and details using Redux
-  const { username, email, isLoggedIn } = useSelector((state) => {
+  const { username, email, isLoggedIn } = useSelector(state => {
     return state.auth;
   });
 
@@ -43,11 +42,11 @@ const AboutUsPage = () => {
       <NavBar
         loggedIn={isLoggedIn}
         accountDetails={{ username: username, email: email }}
-        name='About Us'
+        name="About Us"
       />
-      <div className='about-us-page'>
-        <Container maxWidth='md'>
-          <div className='about-project'>
+      <div className="about-us-page">
+        <Container maxWidth="md">
+          <div className="about-project">
             <div
               style={{
                 width: '100%',
@@ -69,13 +68,13 @@ const AboutUsPage = () => {
                 }}
               >
                 <Box
-                  className='hero-section-image'
+                  className="hero-section-image"
                   sx={{
                     width: { xs: '100%', md: '50%' },
                     height: '100%',
                   }}
                 >
-                  <img src={image} height='100%' width='100%' />
+                  <img src={image} height="100%" width="100%" />
                 </Box>
                 <Box
                   sx={{
@@ -87,9 +86,9 @@ const AboutUsPage = () => {
                     textAlign: 'left',
                   }}
                 >
-                  <Typography variant='h4'>TartanMart</Typography>
+                  <Typography variant="h4">TartanMart</Typography>
                   <br />
-                  <Typography variant='body2' gutterBottom>
+                  <Typography variant="body2" gutterBottom>
                     This is a dynamic web application that intends to serve as a
                     student-friendly platform for buying/selling items between
                     students. Students will be able to more likely find
@@ -102,23 +101,23 @@ const AboutUsPage = () => {
             </div>
           </div>
         </Container>
-        <div className='team'>
-          <div className='team-title'>
-            <Typography variant='h6' gutterBottom>
+        <div className="team">
+          <div className="team-title">
+            <Typography variant="h6" gutterBottom>
               Contributors
             </Typography>
           </div>
-          <hr width='100px' className='centered-hr' />
+          <hr width="100px" className="centered-hr" />
           <br />
-          <div className='team-members'>
+          <div className="team-members">
             {teamMembers.map((member, index) => (
-              <Card key={index} className='member-card'>
+              <Card key={index} className="member-card">
                 <h3>{member.name}</h3>
                 <p>{member.andrewId}@andrew.cmu.edu</p>
                 <Link
                   href={member.linkedInUrl}
-                  target='_blank'
-                  rel='noreferrer'
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   <LinkedInIcon />
                 </Link>

@@ -26,7 +26,7 @@ const profile_tabs = [
   'Account Settings',
 ];
 
-const ProfilePage = (props) => {
+const ProfilePage = props => {
   let location = useLocation();
   const dispatch = useDispatch();
   var activeTabInit = profile_tabs[0];
@@ -56,7 +56,7 @@ const ProfilePage = (props) => {
     updateListingsOnProfilePage();
   }, []);
 
-  const { items, selectedItem } = useSelector((state) => {
+  const { items, selectedItem } = useSelector(state => {
     return state.items;
   });
 
@@ -71,7 +71,7 @@ const ProfilePage = (props) => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { username, email, isLoggedIn, picture } = useSelector((state) => {
+  const { username, email, isLoggedIn, picture } = useSelector(state => {
     return state.auth;
   });
 
@@ -83,12 +83,7 @@ const ProfilePage = (props) => {
         data = await getRequestAuthed(API_ENDPOINTS.getProfile);
         if (data) {
           // let new_items = filterActiveSold(data['items']);
-          dispatch(
-            refreshProfile(
-              data['listings'],
-              data['profile'],
-            )
-          );
+          dispatch(refreshProfile(data['listings'], data['profile']));
 
           //TODO: dispatch call to list of items
           //check json formatting in get_listing
@@ -103,11 +98,11 @@ const ProfilePage = (props) => {
     fetchProfileDataInit();
   }, []);
 
-  const { my_listings, profile } = useSelector((state) => {
+  const { my_listings, profile } = useSelector(state => {
     return state.profile;
   });
 
-  const handleImageChange = (e) => {
+  const handleImageChange = e => {
     const file = e.target.files[0];
     setImage(file);
   };
@@ -127,125 +122,139 @@ const ProfilePage = (props) => {
       <NavBar
         loggedIn={isLoggedIn}
         accountDetails={{ username: username, email: email }}
-        name=''
+        name=""
       />
-        <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent={'center'}
-              // alignItems="center"
-              padding="20px"
-              borderRadius="8px"
-              boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
-              backgroundColor={theme.primary.red}
-              color='#fff'
-              marginLeft={5}
-              marginRight={5}
-              marginTop={2}
-              marginBottom={5}
-              
-            > <div className='page-title-text'>My Profile</div></Box>
-        {/* <Alert severity='error' sx={{ display: errorDisplay }}>
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent={'center'}
+        // alignItems="center"
+        padding="20px"
+        borderRadius="8px"
+        boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
+        backgroundColor={theme.primary.red}
+        color="#fff"
+        marginLeft={5}
+        marginRight={5}
+        marginTop={2}
+        marginBottom={5}
+      >
+        {' '}
+        <div className="page-title-text">My Profile</div>
+      </Box>
+      {/* <Alert severity='error' sx={{ display: errorDisplay }}>
           {errorMessage}
         </Alert> */}
-        <Card
-          elevation={4}
+      <Card
+        elevation={4}
+        style={{
+          padding: '20px',
+          borderRadius: '8px',
+          margin: '20px auto',
+          maxWidth: '800px',
+          width: '80%',
+        }}
+      >
+        <div
+          className="profile-page"
           style={{
-            padding: '20px',
-            borderRadius: '8px',
-            margin: '20px auto',
-            maxWidth: '800px',
-            width: '80%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <div
-            className='profile-page'
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <div className='my-profile-input' style={{ textAlign: 'center' }}>
-              <Avatar
-                size='lg'
-                alt='Profile'
-                src={picture}
-                imgProps={{
-                  style: {
-                    maxHeight: '100%',
-                    maxWidth: '100%',
-                    objectFit: 'cover',
-                    alignSelf: 'center',
-                  },
-                }}
-                sx={{ width: 100, height: 100 }}
-              />
-              <input
-                accept='image/*'
-                id='avatar-image-upload'
-                type='file'
-                onChange={handleImageChange}
-                disabled={!editMode}
-                hidden
-              />
-            </div>
-            <section
-              className='card-body'
-              style={{ textAlign: 'center', marginTop: '20px' }}
-            >
-              <p className='card-title'> {profile.name}</p>
-              <p className='card-title'>{profile.email}</p>
-              <p className='card-title'>Joined on {profile.date_joined}</p>
-            </section>
-          </div>
-          <div
-            className='profile-page'
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              marginTop: 30,
-            }}
-          >
-            <TabGroup
-              types={profile_tabs}
-              active={active}
-              clickHandler={setActive}
-              style={{ textAlign: 'center', marginTop: '20px', width: '100%' }}
+          <div className="my-profile-input" style={{ textAlign: 'center' }}>
+            <Avatar
+              size="lg"
+              alt="Profile"
+              src={picture}
+              imgProps={{
+                style: {
+                  maxHeight: '100%',
+                  maxWidth: '100%',
+                  objectFit: 'cover',
+                  alignSelf: 'center',
+                },
+              }}
+              sx={{ width: 100, height: 100 }}
+            />
+            <input
+              accept="image/*"
+              id="avatar-image-upload"
+              type="file"
+              onChange={handleImageChange}
+              disabled={!editMode}
+              hidden
             />
           </div>
-          <section style={{ textAlign: 'center', marginTop: '20px' }}>
-            {(() => {
-              if (active === profile_tabs[0]) {
-                return (
-                  <Box sx={{ minHeight: '5vh' }}>
-                    <div className='listings-page-body'>
-                      <Grid container spacing={2} className='listings-grid' justifyContent="center"> {/* Center the grid items */}
-                        {my_listings.map((listing) => (
-                          <Grid key={listing.id} item>
-                            <ListingCard listing={listing} />
-                          </Grid>
-                        ))}
-                      </Grid>
-                      {my_listings.length === 0 && (
-          <Typography variant="h6" align="center" color="textSecondary" style={{ marginTop: '20px' }}>
-            No Listings found
-          </Typography>
-        )}
-                    </div>
-                  </Box>
-                );
-              } else {
-                return (
-                  <Box sx={{ minHeight: '50vh' }}>
-                    <SettingsForm profile={profile} />
-                  </Box>
-                );
-              }
-            })()}
+          <section
+            className="card-body"
+            style={{ textAlign: 'center', marginTop: '20px' }}
+          >
+            <p className="card-title"> {profile.name}</p>
+            <p className="card-title">{profile.email}</p>
+            <p className="card-title">Joined on {profile.date_joined}</p>
           </section>
-        </Card>
+        </div>
+        <div
+          className="profile-page"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: 30,
+          }}
+        >
+          <TabGroup
+            types={profile_tabs}
+            active={active}
+            clickHandler={setActive}
+            style={{ textAlign: 'center', marginTop: '20px', width: '100%' }}
+          />
+        </div>
+        <section style={{ textAlign: 'center', marginTop: '20px' }}>
+          {(() => {
+            if (active === profile_tabs[0]) {
+              return (
+                <Box sx={{ minHeight: '5vh' }}>
+                  <div className="listings-page-body">
+                    <Grid
+                      container
+                      spacing={2}
+                      className="listings-grid"
+                      justifyContent="center"
+                    >
+                      {' '}
+                      {/* Center the grid items */}
+                      {my_listings.map(listing => (
+                        <Grid key={listing.id} item>
+                          <ListingCard listing={listing} />
+                        </Grid>
+                      ))}
+                    </Grid>
+                    {my_listings.length === 0 && (
+                      <Typography
+                        variant="h6"
+                        align="center"
+                        color="textSecondary"
+                        style={{ marginTop: '20px' }}
+                      >
+                        No Listings found
+                      </Typography>
+                    )}
+                  </div>
+                </Box>
+              );
+            } else {
+              return (
+                <Box sx={{ minHeight: '50vh' }}>
+                  <SettingsForm profile={profile} />
+                </Box>
+              );
+            }
+          })()}
+        </section>
+      </Card>
       <Footer />
     </>
   );

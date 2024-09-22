@@ -48,7 +48,7 @@ const CounterUnits = ({ selectedItem }) => {
 
   // returns the CounterUnits component
   return (
-    <ButtonGroup size='small' aria-label='small outlined button group'>
+    <ButtonGroup size="small" aria-label="small outlined button group">
       <Button
         style={{
           color: isAddDisabled ? theme.primary.gray : theme.primary.red,

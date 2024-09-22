@@ -19,13 +19,13 @@ const authReducer = (state = initialState, action) => {
       };
 
     case actionTypes.USER_LOGOUT:
-        return {
-            ...state,
-            username: null,
-            email: null,
-            picture: null,
-            isLoggedIn: false,
-        }
+      return {
+        ...state,
+        username: null,
+        email: null,
+        picture: null,
+        isLoggedIn: false,
+      };
     default:
       return state;
   }

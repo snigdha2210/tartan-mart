@@ -40,13 +40,13 @@ const Header = () => {
         }}
       >
         <Box
-          className='hero-section-image'
+          className="hero-section-image"
           sx={{
             width: { xs: '100%', md: '50%' },
             height: '100%',
           }}
         >
-          <img src={image} height='100%' width='100%' alt='Shopping Hero' />
+          <img src={image} height="100%" width="100%" alt="Shopping Hero" />
         </Box>
         <Box
           sx={{
@@ -63,7 +63,7 @@ const Header = () => {
             A marketplace for the students by the students
           </p>
           <Button
-            className='btn btn-outline-primary'
+            className="btn btn-outline-primary"
             style={{
               backgroundColor: theme.primary.red,
               color: 'white',
@@ -82,7 +82,7 @@ const Header = () => {
           </Button>
 
           <Button
-            className='btn button'
+            className="btn button"
             style={{
               background: 'white',
               color: theme.primary.red,
@@ -93,12 +93,10 @@ const Header = () => {
               borderRadius: '10px',
               height: '40px',
             }}
-            onClick={() =>
-              navigateTo('/add-item')
-            }
+            onClick={() => navigateTo('/add-item')}
           >
             List Items
-            </Button>
+          </Button>
         </Box>
       </Box>
     </div>

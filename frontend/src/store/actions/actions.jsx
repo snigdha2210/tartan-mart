@@ -14,23 +14,23 @@ export const userLogout = () => {
     document.cookie = 'jwt=;';
   };
   removeCookie();
-  console.log("COOKIE REMOVED");
+  console.log('COOKIE REMOVED');
   return {
     type: actionTypes.USER_LOGOUT,
   };
 };
 
-export const updateItems = (items) => ({
+export const updateItems = items => ({
   type: actionTypes.UPDATE_ITEMS,
   items: items,
 });
 
-export const updateSelectedItem = (item) => ({
+export const updateSelectedItem = item => ({
   type: actionTypes.UPDATE_SELECTED_ITEM,
   selectedItem: item,
 });
 
-export const fetchItem = (itemId) => ({
+export const fetchItem = itemId => ({
   type: actionTypes.FETCH_ITEM,
   item: itemId,
 });
@@ -55,21 +55,21 @@ export const clearProfile = () => {
   };
 };
 
-export const addArchive = (my_items) => {
+export const addArchive = my_items => {
   return {
     type: actionTypes.ADD_ARCHIVE,
     my_items: my_items,
   };
 };
 
-export const deleteItem = (my_items) => {
+export const deleteItem = my_items => {
   return {
     type: actionTypes.DELETE_ITEM,
     my_items: my_items,
   };
 };
 
-export const updateProfile = (my_profile) => {
+export const updateProfile = my_profile => {
   return {
     type: actionTypes.UPDATE_PROFILE,
     my_profile: my_profile,
@@ -84,7 +84,7 @@ export const addToCart = (item, quantity = 1) => {
   };
 };
 
-export const removeFromCart = (itemId) => {
+export const removeFromCart = itemId => {
   return {
     type: actionTypes.REMOVE_FROM_CART,
     itemId: itemId,

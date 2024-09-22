@@ -19,30 +19,30 @@ function renderItem({ item, order, quantity }) {
       <Accordion sx={{ width: '100%' }}>
         <AccordionSummary
           expandIcon={<ArrowDownwardIcon />}
-          aria-controls='order-item-details'
+          aria-controls="order-item-details"
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}
         >
-          <Typography variant='h6'>{item.name}</Typography>
+          <Typography variant="h6">{item.name}</Typography>
           <Chip
             sx={{ marginLeft: '20px' }}
             label={item.category.toUpperCase()}
-            variant='outlined'
+            variant="outlined"
           />{' '}
           <Chip
             sx={{ marginLeft: '20px' }}
             label={order.payment_status.toUpperCase()}
-            variant='outlined'
+            variant="outlined"
           />
         </AccordionSummary>
         <AccordionDetails>
           <Typography component={Link} to={`/listings/item-detail/${item.id}`}>
             View Item Details
           </Typography>
-          <Typography variant='h6'>Buyer's Details</Typography>
+          <Typography variant="h6">Buyer's Details</Typography>
           <Typography paragraph>Units purchased: {quantity}</Typography>
           <Typography paragraph>
             Delivery/Pickup Option: {item.delivery_or_pickup}
@@ -64,11 +64,11 @@ const OrderList = ({ order_items }) => {
 
   return (
     <>
-      <Alert sx={{ display: errorDisplay }} severity='error'>
+      <Alert sx={{ display: errorDisplay }} severity="error">
         {errorMessage}
       </Alert>
       <List dense={true} sx={{ backgroundColor: 'white' }}>
-        {order_items.map((item) => renderItem(item))}
+        {order_items.map(item => renderItem(item))}
       </List>
     </>
   );

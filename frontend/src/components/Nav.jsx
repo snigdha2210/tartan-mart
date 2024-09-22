@@ -45,7 +45,7 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
 
   const dispatch = useDispatch();
 
-  const { picture } = useSelector((state) => {
+  const { picture } = useSelector(state => {
     return state.auth;
   });
 
@@ -62,13 +62,13 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
     }
   }
 
-  const handleCloseUserMenu = (setting) => {
+  const handleCloseUserMenu = setting => {
     setAnchorElUser(null);
     if (setting === 'Profile') {
       navigateTo('/my-profile');
-    /* removing order features for live version */
-    // } else if (setting === 'My Orders') {
-    //   navigateTo('/my-profile', { state: { active: 'Purchased Orders' } });
+      /* removing order features for live version */
+      // } else if (setting === 'My Orders') {
+      //   navigateTo('/my-profile', { state: { active: 'Purchased Orders' } });
     } else if (setting === 'Sell') {
       navigateTo('/add-item');
     } else if (setting === 'Logout') {
@@ -81,7 +81,7 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
     navigateTo('/checkout');
   };
 
-  const handleOpenUserMenu = (event) => {
+  const handleOpenUserMenu = event => {
     setAnchorElUser(event.currentTarget);
   };
 
@@ -93,14 +93,14 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
         borderRadius: '0px',
         marginBottom: '10px',
       }}
-      position='static'
+      position="static"
     >
-      <Container maxWidth='xl'>
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
-            variant='h5'
+            variant="h5"
             noWrap
-            component='a'
+            component="a"
             sx={{
               flexGrow: 1,
               fontFamily: 'Inter',
@@ -123,19 +123,21 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
           <Box>
             {/* Hide shopping cart */}
             {showShoppingCart ? (
-              <Tooltip title='Shopping Cart'>
-              <IconButton sx={{ ml: 2 }} onClick={handleShoppingCartClick}>
-                <Badge color='secondary' badgeContent={itemCount}>
-                  <ShoppingCartIcon
-                    sx={{ color: theme.primary.coolGray, fontSize: '30px' }}
-                  />
-                </Badge>
-              </IconButton>
-            </Tooltip>) : (<></>)
-            }
-            
+              <Tooltip title="Shopping Cart">
+                <IconButton sx={{ ml: 2 }} onClick={handleShoppingCartClick}>
+                  <Badge color="secondary" badgeContent={itemCount}>
+                    <ShoppingCartIcon
+                      sx={{ color: theme.primary.coolGray, fontSize: '30px' }}
+                    />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <></>
+            )}
+
             {loggedIn ? (
-              <Tooltip title='Open settings'>
+              <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
                     sx={{ fontSize: '30px' }}
@@ -145,14 +147,14 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
                 </IconButton>
               </Tooltip>
             ) : (
-              <Tooltip title='Login'>
+              <Tooltip title="Login">
                 <ClickPopup />
               </Tooltip>
             )}
           </Box>
           <Menu
             sx={{ mt: '45px' }}
-            id='menu-appbar'
+            id="menu-appbar"
             anchorEl={anchorElUser}
             anchorOrigin={{
               vertical: 'top',
@@ -166,12 +168,12 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            {getSettings(loggedIn).map((setting) => (
+            {getSettings(loggedIn).map(setting => (
               <MenuItem
                 key={setting}
                 onClick={() => handleCloseUserMenu(setting)}
               >
-                <Typography textAlign='center' fontFamily={'Inter'}>
+                <Typography textAlign="center" fontFamily={'Inter'}>
                   {setting}
                 </Typography>
               </MenuItem>

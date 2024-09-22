@@ -30,7 +30,7 @@ export default function OrderDetailsPageAgain() {
   const [success, setSuccess] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
 
-  const { username, email, isLoggedIn } = useSelector((state) => {
+  const { username, email, isLoggedIn } = useSelector(state => {
     return state.auth;
   });
 
@@ -70,11 +70,11 @@ export default function OrderDetailsPageAgain() {
       <NavBar
         loggedIn={isLoggedIn}
         accountDetails={{ username: username, email: email }}
-        name=''
+        name=""
       />
-      <Container maxWidth='md'>
+      <Container maxWidth="md">
         <Box sx={{ my: 4 }}>
-          <Typography variant='h4' gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Order Details
           </Typography>
           {message && (
@@ -83,22 +83,22 @@ export default function OrderDetailsPageAgain() {
           {orderDetails && (
             <Card>
               <CardContent>
-                <Typography variant='h6'>Order Information</Typography>
-                <Typography variant='body1'>
+                <Typography variant="h6">Order Information</Typography>
+                <Typography variant="body1">
                   Order ID: {orderDetails.id}
                 </Typography>
-                <Typography variant='body1'>
+                <Typography variant="body1">
                   Total Price: ${orderDetails.total_price}
                 </Typography>
-                <Typography variant='body1'>
+                <Typography variant="body1">
                   Payment Status: {orderDetails.payment_status}
                 </Typography>{' '}
                 <br />
-                <Typography variant='body1'>
+                <Typography variant="body1">
                   Order Date: <FormattedDate date={orderDetails.order_date} />
                 </Typography>{' '}
                 <br />
-                <Typography variant='body1'>
+                <Typography variant="body1">
                   Delivery Address: {orderDetails.delivery_address}
                 </Typography>
               </CardContent>
@@ -108,14 +108,14 @@ export default function OrderDetailsPageAgain() {
             orderDetails.items.map((item, index) => (
               <Card key={index} sx={{ my: 2 }}>
                 <CardMedia
-                  component='img'
+                  component="img"
                   sx={{ width: 100, height: 100 }}
                   image={item.item_image} // Assuming the item image is provided in the data
                   alt={item.item_name}
                 />
                 <CardContent>
-                  <Typography variant='h6'>{item.item_name}</Typography>
-                  <Typography variant='body1'>
+                  <Typography variant="h6">{item.item_name}</Typography>
+                  <Typography variant="body1">
                     Quantity: {item.quantity}
                   </Typography>
                   {/* Add any other details you want to include */}
@@ -123,9 +123,9 @@ export default function OrderDetailsPageAgain() {
               </Card>
             ))}
           <Button
-            variant='outlined'
+            variant="outlined"
             style={{ color: theme.primary.red, borderColor: theme.primary.red }}
-            className='add-to-cart'
+            className="add-to-cart"
             onClick={handleBackRedirect}
           >
             Back to Orders

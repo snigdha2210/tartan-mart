@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Carousel from 'react-material-ui-carousel';  // Import the Carousel
+import Carousel from 'react-material-ui-carousel'; // Import the Carousel
 import Footer from '../components/Footer';
 import NavBar from '../components/Nav';
 import Loader from '../components/Loader';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Typography, Box, CardMedia, Divider, Chip, Table, TableBody, TableCell, TableContainer, TableRow, Link } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Box,
+  CardMedia,
+  Divider,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Link,
+} from '@mui/material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { fetchItem, updateSelectedItem } from '../store/actions/actions';
 import { getRequestAuthed } from '../util/api';
@@ -23,9 +36,7 @@ function renderDeliveryPickUpDetails({ item }) {
         <Typography>Pickup address: {item.pickup_address}</Typography>
       )}
       {item.delivery_or_pickup === 'delivery' && (
-        <Typography>
-          Delivered to you in {item.delivery_time} days
-        </Typography>
+        <Typography>Delivered to you in {item.delivery_time} days</Typography>
       )}
     </>
   );
@@ -36,13 +47,13 @@ const ItemDetailsPage = () => {
   const navigateTo = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const { id } = useParams();
-  const { username, email, isLoggedIn } = useSelector((state) => state.auth);
+  const { username, email, isLoggedIn } = useSelector(state => state.auth);
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [extraItems, setExtraItems] = useState([]);
 
-  const { selectedItem } = useSelector((state) => state.items);
+  const { selectedItem } = useSelector(state => state.items);
   let item = null;
   let seller = null;
 
@@ -53,26 +64,26 @@ const ItemDetailsPage = () => {
   function groupIntoChunks(array, chunkSize) {
     const output = [];
     let currentChunk = [];
-  
+
     array.forEach((item, index) => {
       currentChunk.push(item);
-  
+
       if ((index + 1) % chunkSize === 0 || index === array.length - 1) {
         output.push(currentChunk);
         currentChunk = [];
       }
     });
-  
+
     return output;
   }
 
   useEffect(() => {
-    const getItemOnItemDetailsPage = async (id) => {
+    const getItemOnItemDetailsPage = async id => {
       try {
         const response = await getRequestAuthed(API_ENDPOINTS.getItemById + id);
         if (response) {
           dispatch(updateSelectedItem(response));
-          setExtraItems(response.extra_items)
+          setExtraItems(response.extra_items);
         }
       } catch (error) {
         console.error('Error in GET request:', error);
@@ -84,7 +95,7 @@ const ItemDetailsPage = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
-    })
+    });
   }, [isLoggedIn, id]);
 
   if (loading) {
@@ -103,8 +114,6 @@ const ItemDetailsPage = () => {
     const whatsappUrl = `https://wa.me/${seller.seller_mobile_number}`;
     window.open(whatsappUrl, '_blank');
   };
-
-  
 
   return (
     <>
@@ -129,9 +138,17 @@ const ItemDetailsPage = () => {
       >
         <CardMedia
           component="img"
-          image={item.image == undefined || item.image == null ? "" : item.image}
+          image={
+            item.image == undefined || item.image == null ? '' : item.image
+          }
           alt={item.name}
-          sx={{ width: '100%', maxWidth: '800px', height: '400px', objectFit: 'contain', marginBottom: '20px' }}
+          sx={{
+            width: '100%',
+            maxWidth: '800px',
+            height: '400px',
+            objectFit: 'contain',
+            marginBottom: '20px',
+          }}
         />
 
         <TableContainer>
@@ -174,10 +191,7 @@ const ItemDetailsPage = () => {
                   <Typography variant="h6">Category</Typography>
                 </TableCell>
                 <TableCell>
-                  <Chip
-                    label={item.category}
-                    variant="outlined"
-                  />
+                  <Chip label={item.category} variant="outlined" />
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -190,24 +204,35 @@ const ItemDetailsPage = () => {
                   </Typography>
                 </TableCell>
               </TableRow>
-              {isLoggedIn ? <><TableRow>
-                <TableCell>
-                  <Typography variant="h6">Pickup/Delivery</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body1">
-                    {renderDeliveryPickUpDetails({ item })}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <Typography variant="h6">Seller</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body1">{seller.seller_name == null || seller.seller_name == undefined ? "" : seller.seller_name}</Typography>
-                </TableCell>
-              </TableRow></> : <></>}
+              {isLoggedIn ? (
+                <>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant="h6">Pickup/Delivery</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body1">
+                        {renderDeliveryPickUpDetails({ item })}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant="h6">Seller</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body1">
+                        {seller.seller_name == null ||
+                        seller.seller_name == undefined
+                          ? ''
+                          : seller.seller_name}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                </>
+              ) : (
+                <></>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -225,18 +250,18 @@ const ItemDetailsPage = () => {
               // color: theme.primary.red,
               borderColor: theme.primary.red,
               ':hover': {
-              bgcolor: 'pink', // theme.palette.primary.main
-              color: 'white',
-              borderColor: 'pink',
+                bgcolor: 'pink', // theme.palette.primary.main
+                color: 'white',
+                borderColor: 'pink',
               },
             }}
           >
             Contact Seller on WhatsApp
           </Button>
         )}
-    </Box>
-        {/* <Divider sx={{ width: '100%', marginTop: '40px', marginBottom: '20px' }} /> */}
-        <Box
+      </Box>
+      {/* <Divider sx={{ width: '100%', marginTop: '40px', marginBottom: '20px' }} /> */}
+      <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -252,8 +277,13 @@ const ItemDetailsPage = () => {
         }}
       >
         {/* Carousel Section */}
-        <Typography variant="h5" component="div" alignItems={'left'} align='left' 
-        style={{'justifySelf':'left'}}>
+        <Typography
+          variant="h5"
+          component="div"
+          alignItems={'left'}
+          align="left"
+          style={{ justifySelf: 'left' }}
+        >
           This seller is also selling...
         </Typography>
         <Carousel
@@ -267,30 +297,25 @@ const ItemDetailsPage = () => {
           indicators={true}
         >
           {groupIntoChunks(extraItems, 3).map((group, groupIndex) => (
-            <div style={{'display': 'flex'}}>
-            {group.map((extraItem, extraItemIndex) => (
-            
-            <div style={{'margin': 10,}}>
-            <Link
-                  style={{ textDecoration: 'none' }}
-                  to={`item-detail/${extraItem.id}`}
-            >
-                  
-                
-            <ItemCard
-              key={`${groupIndex}${extraItemIndex}`}
-              product={extraItem}
-              height="100"
-              onItemClick={() => {
-                // console.log('Clicked on:', extraItem);
-                navigateTo(`/listings/item-detail/${extraItem.id}`);
-              }
-              }
-            />
-            </Link>
-            </div>
-            
-            ))}
+            <div style={{ display: 'flex' }}>
+              {group.map((extraItem, extraItemIndex) => (
+                <div style={{ margin: 10 }}>
+                  <Link
+                    style={{ textDecoration: 'none' }}
+                    to={`item-detail/${extraItem.id}`}
+                  >
+                    <ItemCard
+                      key={`${groupIndex}${extraItemIndex}`}
+                      product={extraItem}
+                      height="100"
+                      onItemClick={() => {
+                        // console.log('Clicked on:', extraItem);
+                        navigateTo(`/listings/item-detail/${extraItem.id}`);
+                      }}
+                    />
+                  </Link>
+                </div>
+              ))}
             </div>
           ))}
         </Carousel>

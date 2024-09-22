@@ -40,7 +40,7 @@ const SettingForm = ({ profile }) => {
     }
     return;
   }
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = e => {
     e.preventDefault();
     const formData = new FormData();
 
@@ -65,7 +65,7 @@ const SettingForm = ({ profile }) => {
     handlePutRequest(formPayload);
   };
 
-  const handlePutRequest = async (body) => {
+  const handlePutRequest = async body => {
     try {
       const response = await putRequest(
         API_ENDPOINTS.updateProfileSettings,
@@ -95,12 +95,12 @@ const SettingForm = ({ profile }) => {
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = e => {
     e.preventDefault();
     handleFormSubmit(e);
   };
 
-  const handleEditSaveClick = (e) => {
+  const handleEditSaveClick = e => {
     setEditMode(!editMode);
     if (editMode) {
       handleSave(e);
@@ -110,10 +110,10 @@ const SettingForm = ({ profile }) => {
 
   return (
     <div
-      className='settings-page'
+      className="settings-page"
       style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}
     >
-      <Alert sx={{ display: errorDisplay }} severity='error'>
+      <Alert sx={{ display: errorDisplay }} severity="error">
         {errorMessage}
       </Alert>
       <form
@@ -124,14 +124,14 @@ const SettingForm = ({ profile }) => {
         }}
       >
         <div
-          className='mobile-input'
+          className="mobile-input"
           style={{ marginBottom: '20px', width: '100%' }}
         >
           <TextField
-            label='Mobile Number'
+            label="Mobile Number"
             value={mobile != null ? mobile : ''}
             disabled={!editMode}
-            onChange={(e) => {
+            onChange={e => {
               setMobileInput(e.target.value);
               console.log('updated mobile input', mobile);
             }}
@@ -139,33 +139,33 @@ const SettingForm = ({ profile }) => {
           />
         </div>
         <div
-          className='contact-email-input'
+          className="contact-email-input"
           style={{ marginBottom: '20px', width: '100%' }}
         >
           <TextField
-            label='Email Contact'
+            label="Email Contact"
             value={email != null ? email : ''}
             disabled={true}
-            onChange={(e) => setEmailInput(e.target.value)}
+            onChange={e => setEmailInput(e.target.value)}
             fullWidth
           />
         </div>
         <div
-          className='saved-address'
+          className="saved-address"
           style={{ marginBottom: '20px', width: '100%' }}
         >
           <TextField
-            label='Pickup/Delivery Address'
+            label="Pickup/Delivery Address"
             value={address != null ? address : ''}
             disabled={!editMode}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={e => setAddress(e.target.value)}
             fullWidth
           />
         </div>
 
-        <div className='save-input' style={{ textAlign: 'center' }}>
+        <div className="save-input" style={{ textAlign: 'center' }}>
           <Button
-            variant='contained'
+            variant="contained"
             style={{ background: theme.primary.red }}
             onClick={handleEditSaveClick}
           >

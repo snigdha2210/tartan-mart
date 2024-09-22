@@ -35,7 +35,7 @@ export default function ItemCard(props) {
     >
       <CardActionArea onClick={handleCardClick}>
         <CardMedia
-          component='img'
+          component="img"
           height={props.height}
           image={imageUrl}
           alt={props.product.name}
@@ -48,13 +48,17 @@ export default function ItemCard(props) {
           }}
         />
         <CardContent>
-          <Typography gutterBottom variant='h5' component='div'>
+          <Typography gutterBottom variant="h5" component="div">
             {props.product.name}
           </Typography>
-          <Typography variant='body2' color='text.secondary'>
+          <Typography variant="body2" color="text.secondary">
             $ {props.product.price}
           </Typography>
-          <Chip style={{marginTop:5, marginLeft:-3}}label={props.product.category} variant='outlined' />
+          <Chip
+            style={{ marginTop: 5, marginLeft: -3 }}
+            label={props.product.category}
+            variant="outlined"
+          />
         </CardContent>
       </CardActionArea>
     </Card>

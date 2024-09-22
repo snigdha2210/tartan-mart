@@ -31,19 +31,19 @@ export default function CheckoutPage() {
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { cartItems } = useSelector((state) => {
+  const { cartItems } = useSelector(state => {
     return state.cart;
   });
 
-  const { profile } = useSelector((state) => {
+  const { profile } = useSelector(state => {
     return state.profile;
   });
 
-  const { total } = useSelector((state) => ({
+  const { total } = useSelector(state => ({
     total: state.cart.total,
   }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     console.log('CART VALIDATE:' + JSON.stringify(cartItems));
@@ -108,19 +108,19 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  const { username, email, isLoggedIn } = useSelector((state) => {
+  const { username, email, isLoggedIn } = useSelector(state => {
     return state.auth;
   });
 
   return showModal ? (
-    <ErrorModal errorMessage={errorMessage} redirectPath='/listings' />
+    <ErrorModal errorMessage={errorMessage} redirectPath="/listings" />
   ) : message.length > 0 ? (
     <>
       <NavBar
         loggedIn={isLoggedIn}
         accountDetails={{ username: username, email: email }}
       />
-      <div className='payment-status'>
+      <div className="payment-status">
         <Alert severity={paymentStatus ? 'success' : 'error'}>{message}</Alert>
       </div>
       <Footer />
@@ -131,15 +131,15 @@ export default function CheckoutPage() {
         loggedIn={isLoggedIn}
         accountDetails={{ username: username, email: email }}
       />
-      <Container maxWidth='md'>
+      <Container maxWidth="md">
         <Box sx={{ my: 4 }}>
-          <Typography variant='h4' gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Review Your Order
           </Typography>
           <Card>
             <CardContent>
-              <Typography variant='h6'>Your Order</Typography>
-              {shoppingCart.items.map((item) => (
+              <Typography variant="h6">Your Order</Typography>
+              {shoppingCart.items.map(item => (
                 <Card
                   key={item.item.id}
                   sx={{ display: 'flex', my: 2, height: '150px' }}
@@ -148,17 +148,17 @@ export default function CheckoutPage() {
                     sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}
                   >
                     <CardContent sx={{ flex: '1 0 auto' }}>
-                      <Typography variant='h5' component='div'>
+                      <Typography variant="h5" component="div">
                         {item.item.name}
                       </Typography>
                       <Typography
-                        variant='subtitle1'
-                        color='text.secondary'
-                        component='div'
+                        variant="subtitle1"
+                        color="text.secondary"
+                        component="div"
                       >
                         {item.description}
                       </Typography>
-                      <Typography variant='h6' color={theme.primary.red}>
+                      <Typography variant="h6" color={theme.primary.red}>
                         ${item.item.price}
                       </Typography>
                       <Box
@@ -169,7 +169,7 @@ export default function CheckoutPage() {
                     </CardContent>
                   </Box>
                   <CardMedia
-                    component='img'
+                    component="img"
                     sx={{ width: 'auto' }}
                     image={item.item.image}
                     alt={item.item.name}
@@ -177,7 +177,7 @@ export default function CheckoutPage() {
                 </Card>
               ))}
 
-              <Typography variant='h6' className='total-price'>
+              <Typography variant="h6" className="total-price">
                 Total: ${total.toFixed(2)}
               </Typography>
               <form onSubmit={handleSubmit}>
@@ -185,34 +185,34 @@ export default function CheckoutPage() {
                   <Grid item xs={12}>
                     <TextField
                       required
-                      label='Email'
+                      label="Email"
                       fullWidth
-                      variant='outlined'
+                      variant="outlined"
                       defaultValue={profile.email}
                       disabled
-                      name='email'
+                      name="email"
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       required
-                      label='Full name'
+                      label="Full name"
                       fullWidth
-                      variant='outlined'
+                      variant="outlined"
                       defaultValue={profile.name}
                       disabled
-                      name='fullName'
+                      name="fullName"
                     />
                   </Grid>
 
                   <Grid item xs={12}>
                     <TextField
                       required
-                      label='Address'
+                      label="Address"
                       fullWidth
-                      variant='outlined'
+                      variant="outlined"
                       defaultValue={profile.address}
-                      name='address'
+                      name="address"
                     />
                   </Grid>
                 </Grid>
@@ -224,13 +224,13 @@ export default function CheckoutPage() {
                     my: 2,
                   }}
                 >
-                  <Button variant='outlined' color='error'>
+                  <Button variant="outlined" color="error">
                     Cancel
                   </Button>
                   <Button
-                    variant='contained'
-                    color='primary'
-                    type='submit'
+                    variant="contained"
+                    color="primary"
+                    type="submit"
                     disabled={loading}
                   >
                     Continue to Payment

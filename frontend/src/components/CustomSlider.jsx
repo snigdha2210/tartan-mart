@@ -46,10 +46,10 @@ const CustomSlider = ({ items }) => {
 
   // returns the slider component
   return (
-    <div className='mt-20'>
+    <div className="mt-20">
       <Slider {...settings}>
-        {items.map((item) => (
-          <div className='bg-white h-[300px] text-black rounded-xl'>
+        {items.map(item => (
+          <div className="bg-white h-[300px] text-black rounded-xl">
             <div style={styles.img_container}>
               <img src={item.img} style={styles.item_img}></img>
             </div>

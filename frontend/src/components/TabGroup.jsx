@@ -25,12 +25,12 @@ const TabGroup = ({ types, active, clickHandler }) => {
   const theme = useTheme();
   return (
     <div>
-      {types.map((type) => (
+      {types.map(type => (
         <Tab
           key={type}
           active={active === type ? active : null}
           onClick={() => clickHandler(type)}
-          style={{ fontFamily: 'Inter'}}
+          style={{ fontFamily: 'Inter' }}
         >
           {type}
         </Tab>

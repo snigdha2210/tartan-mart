@@ -14,20 +14,21 @@ const DEFAULT_IMAGE_URL =
   'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg';
 
 export default function ListingCard(props) {
-  console.log("LISTING:", props.listing);
+  console.log('LISTING:', props.listing);
 
   // Function to handle click event on the card
   const handleCardClick = () => {
-    console.log("CARD CLICKED:");
+    console.log('CARD CLICKED:');
   };
 
   // Check if there are images provided, use default if not
-  const images = props.listing.images && props.listing.images.length > 0
-    ? props.listing.images
-    : [DEFAULT_IMAGE_URL];
+  const images =
+    props.listing.images && props.listing.images.length > 0
+      ? props.listing.images
+      : [DEFAULT_IMAGE_URL];
 
   const theme = useTheme();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const handleManageListingClick = () => {
     navigate(`/listing/${props.listing.id}`); // Navigate to /listing/{id}
   };
@@ -42,8 +43,8 @@ export default function ListingCard(props) {
         borderRadius: '10px', // Rounded corners for a modern look
       }}
     >
-      <CardActionArea 
-        onClick={handleCardClick} 
+      <CardActionArea
+        onClick={handleCardClick}
         sx={{ display: 'flex', alignItems: 'stretch' }}
       >
         {/* Carousel on the left side */}
@@ -61,12 +62,12 @@ export default function ListingCard(props) {
             }}
           >
             {props.listing.listing_item.map((item, index) => (
-              <img 
+              <img
                 key={index}
                 src={item.image || DEFAULT_IMAGE_URL}
                 alt={`Image ${index + 1}`}
                 style={{
-                  height: '300px', 
+                  height: '300px',
                   objectFit: 'contain',
                   width: '100%',
                 }}
@@ -75,32 +76,39 @@ export default function ListingCard(props) {
           </Carousel>
         </Box>
         {/* Listing details on the right side */}
-        <CardContent 
-          sx={{ 
-            width: '50%', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            justifyContent: 'center', 
+        <CardContent
+          sx={{
+            width: '50%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
             backgroundColor: '#f5f5f5', // Light grey background for details
             padding: '20px',
           }}
         >
-          <Typography gutterBottom variant='h5' component='div'>
+          <Typography gutterBottom variant="h5" component="div">
             {props.listing.name}
           </Typography>
-          <Typography variant='body2' color='text.secondary' sx={{ marginBottom: '10px', wordWrap: 'break-word' }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ marginBottom: '10px', wordWrap: 'break-word' }}
+          >
             {props.listing.description}
           </Typography>
-        <div className='save-input' style={{ textAlign: 'center', marginTop: 10 }}>
-          <Button
-            variant='contained'
-            style={{ background: theme.primary.red }}
-            // onClick={handleEditSaveClick}
-            onClick={handleManageListingClick}
+          <div
+            className="save-input"
+            style={{ textAlign: 'center', marginTop: 10 }}
           >
-            Manage Listing
-          </Button>
-        </div>
+            <Button
+              variant="contained"
+              style={{ background: theme.primary.red }}
+              // onClick={handleEditSaveClick}
+              onClick={handleManageListingClick}
+            >
+              Manage Listing
+            </Button>
+          </div>
         </CardContent>
       </CardActionArea>
     </Card>

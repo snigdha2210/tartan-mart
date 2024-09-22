@@ -1,4 +1,4 @@
-export const getRequest = async (url) => {
+export const getRequest = async url => {
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -17,7 +17,7 @@ export const getRequest = async (url) => {
   }
 };
 
-export const getRequestAuthed = async (url) => {
+export const getRequestAuthed = async url => {
   const jwt = getCookie('jwt');
   if (jwt == null) {
     return await getRequest(url);
@@ -136,11 +136,11 @@ export const postRequest = async (url, requestData, contentType) => {
   }
 };
 
-export const deleteRequest = async (url) => {
+export const deleteRequest = async url => {
   try {
     const csrfToken = getCookie('csrftoken');
     const jwt = getCookie('jwt');
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -168,7 +168,7 @@ export const deleteRequest = async (url) => {
 };
 
 // UTIL METHODS
-export const getCookie = (name) => {
+export const getCookie = name => {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
     const cookies = document.cookie.split(';');
@@ -186,5 +186,5 @@ export const getCookie = (name) => {
 var csrftoken = getCookie('csrftoken');
 
 export const CSRFToken = () => {
-  return <input type='hidden' name='csrfmiddlewaretoken' value={csrftoken} />;
+  return <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />;
 };

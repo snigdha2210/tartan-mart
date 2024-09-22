@@ -14,7 +14,7 @@ const API_ENDPOINTS = {
   getOrderDetails: BASE_URL + 'getOrderDetails/',
   getOrder: BASE_URL + 'getOrder/',
   getListing: BASE_URL + 'listing/',
-  updateListing: BASE_URL + 'updateListing/'
+  updateListing: BASE_URL + 'updateListing/',
 };
 
 export default API_ENDPOINTS;

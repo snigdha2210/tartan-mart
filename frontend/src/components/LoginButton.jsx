@@ -14,19 +14,14 @@ const LoginButton = ({ onSuccess, onFailure }) => {
       const data = await getRequestAuthed(API_ENDPOINTS.getProfile);
       if (data) {
         let new_items = filterActiveSold(data['items']);
-        dispatch(
-          refreshProfile(
-            data['listings'],
-            data['profile'],
-          )
-        );
+        dispatch(refreshProfile(data['listings'], data['profile']));
       }
     } catch (error) {
       console.error('Error in GET request:', error);
     }
   };
 
-  const fetchItemsDataInit = async (isFilter) => {
+  const fetchItemsDataInit = async isFilter => {
     // console.log("SEARCHING..." + searchStateVar);
     try {
       const url = new URL(API_ENDPOINTS.getItems);
@@ -50,7 +45,7 @@ const LoginButton = ({ onSuccess, onFailure }) => {
     }
   };
 
-  const handlePostRequest = async (body) => {
+  const handlePostRequest = async body => {
     try {
       const response = await postRequest(
         API_ENDPOINTS.validateToken,
@@ -59,12 +54,11 @@ const LoginButton = ({ onSuccess, onFailure }) => {
       );
       if (response) {
         document.cookie = `jwt=${body.credential}; SameSite=Strict`;
-        
+
         await fetchProfileDataInit();
         await fetchItemsDataInit(false);
 
         dispatch(userLogin(response.name, response.email, response.picture));
-
       }
     } catch (error) {
       console.error('Error in POST request:', error);
@@ -75,7 +69,7 @@ const LoginButton = ({ onSuccess, onFailure }) => {
     <>
       <form>
         <GoogleLogin
-          onSuccess={(credentialResponse) => {
+          onSuccess={credentialResponse => {
             handlePostRequest(credentialResponse);
           }}
           onError={() => {
