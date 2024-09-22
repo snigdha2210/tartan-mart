@@ -19,6 +19,9 @@ export const getRequest = async (url) => {
 
 export const getRequestAuthed = async (url) => {
   const jwt = getCookie('jwt');
+  if (jwt == null) {
+    return await getRequest(url);
+  }
   try {
     const response = await fetch(url, {
       headers: {

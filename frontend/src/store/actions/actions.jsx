@@ -11,9 +11,10 @@ export const userLogin = (username, email, picture) => {
 
 export const userLogout = () => {
   const removeCookie = () => {
-    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'jwt=;';
   };
   removeCookie();
+  console.log("COOKIE REMOVED");
   return {
     type: actionTypes.USER_LOGOUT,
   };

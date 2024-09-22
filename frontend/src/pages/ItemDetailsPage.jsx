@@ -40,6 +40,14 @@ const ItemDetailsPage = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
 
+  const { selectedItem } = useSelector((state) => state.items);
+  let item = null;
+  let seller = null;
+
+  if (selectedItem) {
+    ({ item, seller } = selectedItem);
+  }
+
   useEffect(() => {
     const getItemOnItemDetailsPage = async (id) => {
       try {
@@ -54,15 +62,11 @@ const ItemDetailsPage = () => {
       }
     };
     getItemOnItemDetailsPage(id);
-  }, []);
+  }, [isLoggedIn]);
 
-  const { selectedItem } = useSelector((state) => state.items);
-  let item = null;
-  let seller = null;
 
-  if (selectedItem) {
-    ({ item, seller } = selectedItem);
-  }
+
+  console.log("ITEM:" + JSON.stringify(item));
 
   const handleContactSeller = () => {
     const whatsappUrl = `https://wa.me/${seller.seller_mobile_number}`;
@@ -70,6 +74,22 @@ const ItemDetailsPage = () => {
   };
 
   if (loading) {
+    return <Loader />;
+  }
+
+  // if (!username) {
+  //   return <Loader />;
+  // }
+
+  // if (!email) {
+  //   return <Loader />;
+  // }
+
+  if (!selectedItem) {
+    return <Loader />;
+  }
+
+  if (!item) {
     return <Loader />;
   }
 
@@ -96,7 +116,7 @@ const ItemDetailsPage = () => {
       >
         <CardMedia
           component="img"
-          image={item.image}
+          image={item.image == undefined || item.image == null ? "" : item.image}
           alt={item.name}
           sx={{ width: '100%', maxWidth: '800px', height: 'auto', objectFit: 'contain', marginBottom: '20px' }}
         />
@@ -157,7 +177,7 @@ const ItemDetailsPage = () => {
                   </Typography>
                 </TableCell>
               </TableRow>
-              <TableRow>
+              {isLoggedIn ? <><TableRow>
                 <TableCell>
                   <Typography variant="h6">Pickup/Delivery</Typography>
                 </TableCell>
@@ -172,14 +192,14 @@ const ItemDetailsPage = () => {
                   <Typography variant="h6">Seller</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="body1">{seller.seller_name}</Typography>
+                  <Typography variant="body1">{seller.seller_name == null || seller.seller_name == undefined ? "" : seller.seller_name}</Typography>
                 </TableCell>
-              </TableRow>
+              </TableRow></> : <></>}
+              
             </TableBody>
           </Table>
         </TableContainer>
-
-        <Button
+        {isLoggedIn ? <>        <Button
           variant="contained"
           onClick={handleContactSeller}
           startIcon={<WhatsAppIcon />}
@@ -191,7 +211,8 @@ const ItemDetailsPage = () => {
           }}
         >
           Contact Seller on WhatsApp
-        </Button>
+        </Button></> : <></>}
+
       </Box>
       <Footer />
     </>
