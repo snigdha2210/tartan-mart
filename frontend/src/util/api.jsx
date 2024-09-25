@@ -56,14 +56,14 @@ export const putRequest = async (url, payload, contentType) => {
         Authorization: 'Bearer ' + jwt,
         'Content-Type': contentType,
       };
-      body = payload;
+      body = JSON.stringify(payload);
     } else {
       headers = {
         'x-csrftoken': csrfToken,
         Authorization: 'Bearer ' + jwt,
         'Content-Type': 'application/json',
       };
-      body = JSON.stringify(payload);
+      body = payload;
     }
     const response = await fetch(url, {
       method: 'PUT',
