@@ -101,12 +101,25 @@ const ListingsPage = props => {
   };
 
   const handleMinPriceInputChange = event => {
-    setMinPriceValue(Number(event.target.value.substring(1)));
-    setPriceRange([Number(event.target.value.substring(1)), maxPriceValue]);
+    const value = event.target.value;
+    const numericValue = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+    if (numericValue === '') {
+      setMinPriceValue(0); // Default to 0 if input is empty
+    } else {
+      setMinPriceValue(Number(numericValue));
+    }
+    setPriceRange([Number(numericValue), maxPriceValue]);
   };
+
   const handleMaxPriceInputChange = event => {
-    setMaxPriceValue(Number(event.target.value.substring(1)));
-    setPriceRange([minPriceValue, Number(event.target.value.substring(1))]);
+    const value = event.target.value;
+    const numericValue = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+    if (numericValue === '') {
+      setMaxPriceValue(1000); // Default to 1000 if input is empty
+    } else {
+      setMaxPriceValue(Number(numericValue));
+    }
+    setPriceRange([minPriceValue, Number(numericValue)]);
   };
 
   const handleBlur = () => {
@@ -293,8 +306,9 @@ const ListingsPage = props => {
                   label="Min Price"
                   variant="outlined"
                   fullWidth
-                  value={`$${minPriceValue}`}
+                  value={`$${minPriceValue === 0 ? '' : minPriceValue}`} // Show $ sign and handle blank input
                   onChange={handleMinPriceInputChange}
+                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} // Ensure numeric input
                 />
               </Grid>
 
@@ -303,8 +317,9 @@ const ListingsPage = props => {
                   label="Max Price"
                   variant="outlined"
                   fullWidth
-                  value={`$${maxPriceValue}`}
+                  value={`$${maxPriceValue === 1000 ? '' : maxPriceValue}`} // Show $ sign and handle blank input
                   onChange={handleMaxPriceInputChange}
+                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} // Ensure numeric input
                 />
               </Grid>
             </Grid>
