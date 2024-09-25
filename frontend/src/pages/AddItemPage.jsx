@@ -252,7 +252,6 @@ const AddItemPage = () => {
         console.log('SENDING LISTING:', JSON.stringify(listingData));
         await handlePostRequest2(listingData);
         clearForm();
-        navigateTo('/my-profile');
       });
     } catch (error) {
       setErrorDisplay('show');
@@ -279,6 +278,8 @@ const AddItemPage = () => {
       ); // 'application/x-www-form-urlencoded'
       if (response) {
         setErrorDisplay('none');
+        clearForm();
+        navigateTo('/my-profile');
       }
     } catch (error) {
       console.error('Error in POST request:', error);

@@ -26,7 +26,7 @@ const pages = ['Home', 'About Us', 'Products'];
 const settingsLogIn = ['Log In'];
 /* removing order features for live version */
 // const settings = ['Profile', 'My Orders', 'Sell', 'Logout'];
-const settings = ['Profile', 'Sell', 'Logout'];
+const settings = ['Profile', 'List Items', 'Logout'];
 
 const showShoppingCart = false;
 
@@ -69,7 +69,7 @@ const NavBar = ({ loggedIn, accountDetails, name }) => {
       /* removing order features for live version */
       // } else if (setting === 'My Orders') {
       //   navigateTo('/my-profile', { state: { active: 'Purchased Orders' } });
-    } else if (setting === 'Sell') {
+    } else if (setting === 'List Items') {
       navigateTo('/add-item');
     } else if (setting === 'Logout') {
       clearData(dispatch);
