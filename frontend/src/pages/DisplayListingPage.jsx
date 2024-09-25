@@ -26,6 +26,9 @@ import { useTheme } from '@emotion/react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
+import Switch from '@mui/material/Switch';
+import DeleteIcon from '@mui/icons-material/Delete'; // Import the Delete Icon
+
 import { categories_tabs } from '../constants/constants.jsx';
 import API_ENDPOINTS from '../constants/apiEndpoints';
 import { getRequest, getRequestAuthed, putRequest } from '../util/api';
@@ -80,6 +83,7 @@ const RedBorderSelect = styled(Select)`
 
 const DisplayListingPage = ({ match }) => {
   const theme = useTheme();
+  const navigateTo = useNavigate();
 
   const [itemName, setItemName] = useState('');
   const [description, setDescription] = useState('');
@@ -146,6 +150,7 @@ const DisplayListingPage = ({ match }) => {
       quantity: '',
       category: '',
       description: '',
+      current_status: 'listed',
     }));
 
     setItems([...items, ...newItems]);
@@ -186,24 +191,38 @@ const DisplayListingPage = ({ match }) => {
   }, [listingId]);
 
   const validateFormData = () => {
-    if (!itemName) throw new Error('No name set');
-    if (!description || description.length < 30)
-      throw new Error('Invalid or too short description');
-    if (!deliveryPickupOption) throw new Error('Delivery or pickup not set');
+    if (!itemName) {
+      throw new Error('Please enter a Listing Name');
+    }
+    if (!deliveryPickupOption) {
+      throw new Error('Please choose how buyers can get the items');
+    }
     if (
       deliveryPickupOption === 'delivery' &&
-      (!deliveryTime || deliveryTime === '')
-    )
-      throw new Error('Set the estimated delivery time in days');
+      (!deliveryTime || deliveryTime === '' || Number(deliveryTime) <= 0)
+    ) {
+      try {
+        let deliveryTimeNumber = Number(deliveryTime);
+        if (deliveryTimeNumber <= 0) {
+          throw new Error('Delivery time must be more than 0 days');
+        }
+      } catch {
+        throw new Error('Delivery time must be a number and more than 0 days');
+      }
+      throw new Error('Please set the estimated delivery time in days');
+    }
     if (
       deliveryPickupOption === 'pickup' &&
       (!pickupAddress || pickupAddress === '')
-    )
-      throw new Error('Include the pickup address');
-    if (items.length === 0) throw new Error('No items added');
+    ) {
+      throw new Error('Please enter a pickup address');
+    }
+    if (items.length === 0) {
+      throw new Error('Please add at least 1 item');
+    }
 
     items.forEach((item, index) => {
-      if (!item.image && !item.image_url)
+      if (!item.image || item.image.size <= 0)
         throw new Error(`Item ${index + 1}: Invalid image`);
       if (!item.price || item.price <= 0)
         throw new Error(`Item ${index + 1}: Invalid price`);
@@ -216,55 +235,75 @@ const DisplayListingPage = ({ match }) => {
     e.preventDefault();
 
     try {
+      console.log('TRYING TO SUBMIT');
       validateFormData();
-      console.log('VALID FORM');
       const listingData = {
         name: itemName,
-        description: description,
+        // "description": description,
         delivery_or_pickup: deliveryPickupOption,
       };
       if (deliveryPickupOption === 'delivery') {
-        listingData['delivery'] = deliveryTime;
+        listingData['delivery_time'] = deliveryTime;
       } else {
         listingData['pickup_address'] = pickupAddress;
       }
-      console.log('CHECKPOINT 2');
-      // console.log("ITEMS:" + JSON.stringify(items));
+
+      // Function to convert file to Base64 and transform the object
       function convertToNewObject(items) {
         const promises = items.map(item => {
-          console.log('RESOLVING ITEM:' + JSON.stringify(item));
-          if (item.image.name) {
-            // if (!item.image.toString().includes('s3')) {
-            const reader = new FileReader();
+          const reader = new FileReader();
 
-            return new Promise(resolve => {
-              reader.onloadend = () => {
-                const newItem = {
-                  ...item,
-                  image_b64: reader.result,
-                  image_name: item.image.name,
-                };
-                resolve(newItem);
+          return new Promise(resolve => {
+            reader.onloadend = () => {
+              // Creating a new object with the required structure
+              const newItem = {
+                name: item.name,
+                image_name: item.image.name,
+                image_b64: reader.result,
+                price: item.price,
+                quantity: item.quantity,
+                category: item.category.toLowerCase(),
+                description: item.description,
+                current_status: item.current_status,
               };
-              reader.readAsDataURL(item.image);
-            });
-            // }
-          } else {
-            return Promise.resolve(item);
-          }
+              resolve(newItem);
+            };
+            if (item.image instanceof File) {
+              reader.readAsDataURL(item.image); // Only read new images
+            } else {
+              const existingItem = {
+                id: item.id,
+                name: item.name,
+                // image: item.image,
+                image_name: item.image_name, // Use existing image name
+                image_b64: null, // No need to re-encode existing images
+                price: item.price,
+                quantity: item.quantity,
+                category: item.category.toLowerCase(),
+                description: item.description,
+                current_status: item.current_status,
+              };
+              resolve(existingItem);
+            }
+          });
         });
 
         return Promise.all(promises);
       }
 
       convertToNewObject(items).then(async newItems => {
-        console.log('CHECKPOINT 3');
+        // console.log(newItems);
         listingData['listing_item'] = newItems;
-        await handlePutRequest(JSON.stringify(listingData));
+        // formData.append("items", JSON.stringify(newItems));
+        console.log('SENDING LISTING:', JSON.stringify(listingData));
+        await handlePutRequest(listingData);
+        // clearForm();
+        // navigateTo('/my-profile');
       });
     } catch (error) {
       setErrorDisplay('show');
       setErrorMessage(error.message);
+      setOpenSubmit(false);
     }
   };
 
@@ -279,12 +318,13 @@ const DisplayListingPage = ({ match }) => {
     console.log('SENDING PUT REQUEST');
     try {
       const response = await putRequest(
-        `${API_ENDPOINTS.updateListing}/${listingId}`,
+        `${API_ENDPOINTS.updateListing}${listingId}/`,
         body,
         'application/json'
       );
       if (response) {
         setErrorDisplay('none');
+        navigateTo('/my-profile');
       }
     } catch (error) {
       console.error('Error in PUT request:', error);
@@ -294,7 +334,7 @@ const DisplayListingPage = ({ match }) => {
       }
       return;
     }
-    clearForm();
+    // clearForm();
   };
 
   const handleRadioDeliveryPickup = event => {
@@ -304,6 +344,19 @@ const DisplayListingPage = ({ match }) => {
     } else {
       setDeliveryTime('');
     }
+  };
+
+  const handleSwitchChange = (index, event) => {
+    const newStatus = event.target.checked ? 'listed' : 'delisted';
+    handleImageDetailsChange(index, 'current_status', newStatus);
+  };
+
+  // Handle delete of individual image
+  const handleDeleteImage = index => {
+    const updatedItems = items.filter((_, idx) => idx !== index);
+    const updatedPreviews = imagePreviews.filter((_, idx) => idx !== index);
+    setItems(updatedItems);
+    setImagePreviews(updatedPreviews);
   };
 
   // ... Rest of the component code, similar to AddItemPage
@@ -367,34 +420,6 @@ const DisplayListingPage = ({ match }) => {
               )}
             </Box>
           </div>
-          {/* <div className='add-item-input' style={{ marginBottom: '20px' }}>
-              <WhiteBorderTextField
-                fullWidth
-                label='Listing Description'
-                name='description'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                inputRef={register('description', {
-                  required: true,
-                  minLength: 50,
-                })}
-                multiline
-              />
-              <Box>
-                {'description' in errors &&
-                  errors.description.type === 'required' && (
-                    <span className='error-message'>
-                      This is required field
-                    </span>
-                  )}
-                {errors.description &&
-                  errors.description.type === 'minLength' && (
-                    <span className='error-message'>
-                      Minimum characters 50 required
-                    </span>
-                  )}
-              </Box>
-            </div> */}
 
           <div
             className="delivery-pickup-input"
@@ -477,7 +502,7 @@ const DisplayListingPage = ({ match }) => {
             })()}
           </section>
 
-          <Button
+          {/* <Button
             component="label"
             role={undefined}
             variant="contained"
@@ -505,10 +530,175 @@ const DisplayListingPage = ({ match }) => {
               accept="image/png, image/jpg, image/jpeg"
               id="image-upload"
             />
+          </Button> */}
+
+          <Typography variant="h4" color="text.secondary" marginBottom={2}>
+            Add your items
+          </Typography>
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+            style={{
+              background: 'white',
+              margin: '5px',
+              color: theme.primary.red,
+              borderColor: theme.primary.red,
+              borderWidth: 1,
+              borderStyle: 'solid',
+              boxShadow: 'none',
+            }}
+          >
+            Add Items
+            <VisuallyHiddenInput
+              type="file"
+              onChange={e => {
+                handleImageChange(e);
+              }}
+              multiple
+              ref={myref}
+              accept="image/png, image/jpg, image/jpeg"
+              id="image-upload"
+            />
           </Button>
 
           <div className="add-item-input" style={{ marginBottom: '20px' }}>
-            {/* Display image previews */}
+            <Grid container spacing={2}>
+              {imagePreviews.map((preview, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card style={{ position: 'relative' }}>
+                    <CardContent>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Switch
+                          checked={items[index].current_status === 'listed'}
+                          onChange={e => handleSwitchChange(index, e)}
+                          inputProps={{ 'aria-label': 'controlled' }}
+                          sx={{
+                            '& .MuiSwitch-switchBase.Mui-checked': {
+                              color: theme.primary.red,
+                            },
+                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
+                              {
+                                backgroundColor: theme.primary.red,
+                              },
+                          }}
+                        />
+                        <DeleteIcon
+                          onClick={() => handleDeleteImage(index)}
+                          style={{
+                            cursor: 'pointer',
+                            color: theme.primary.red,
+                          }}
+                        />
+                      </div>
+                      <img
+                        src={preview}
+                        alt={`image-${index}`}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'contain',
+                        }}
+                      />
+                      <WhiteBorderTextField
+                        fullWidth
+                        label="Item Name"
+                        margin="normal"
+                        value={items[index].name}
+                        onChange={e =>
+                          handleImageDetailsChange(
+                            index,
+                            'name',
+                            e.target.value
+                          )
+                        }
+                      />
+                      <WhiteBorderTextField
+                        fullWidth
+                        label="Item Description"
+                        margin="normal"
+                        value={items[index].description}
+                        onChange={e =>
+                          handleImageDetailsChange(
+                            index,
+                            'description',
+                            e.target.value
+                          )
+                        }
+                      />
+                      <WhiteBorderTextField
+                        fullWidth
+                        label={'Price'}
+                        type="number"
+                        margin="normal"
+                        value={items[index].price}
+                        onChange={e =>
+                          handleImageDetailsChange(
+                            index,
+                            'price',
+                            e.target.value
+                          )
+                        }
+                      />
+                      <WhiteBorderTextField
+                        fullWidth
+                        label="Quantity"
+                        type="number"
+                        margin="normal"
+                        value={items[index].quantity}
+                        onChange={e =>
+                          handleImageDetailsChange(
+                            index,
+                            'quantity',
+                            e.target.value
+                          )
+                        }
+                      />
+                      <FormControl fullWidth margin="normal">
+                        <InputLabel id="multiple-checkbox-label">
+                          Category
+                        </InputLabel>
+                        <RedBorderSelect
+                          input={<OutlinedInput label="Category" />}
+                          InputLabelProps={{
+                            style: { color: '#C41230' }, // Change label color
+                          }}
+                          value={
+                            items[index].category.charAt(0).toUpperCase() +
+                            items[index].category.substring(1).toLowerCase()
+                          }
+                          onChange={e =>
+                            handleImageDetailsChange(
+                              index,
+                              'category',
+                              e.target.value
+                            )
+                          }
+                        >
+                          {categories_tabs.map(name => (
+                            <MenuItem key={name} value={name}>
+                              <ListItemText primary={name} />
+                            </MenuItem>
+                          ))}
+                          <MenuItem value="other">Other</MenuItem>
+                        </RedBorderSelect>
+                      </FormControl>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </div>
+
+          {/* <div className="add-item-input" style={{ marginBottom: '20px' }}>
             <Grid container spacing={2}>
               {imagePreviews.map((preview, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
@@ -612,7 +802,7 @@ const DisplayListingPage = ({ match }) => {
                 </Grid>
               ))}
             </Grid>
-          </div>
+          </div> */}
 
           <Button
             variant="contained"
