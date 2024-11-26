@@ -3,8 +3,9 @@ import React from 'react';
 import { Box, Button } from '@mui/material';
 import '@fontsource/inter';
 import { useNavigate } from 'react-router-dom';
-import { theme } from '../../theme.js';
+// import { theme } from '../../theme.js';
 import '../assets/Header.css';
+import { useTheme } from '@emotion/react';
 
 // URL of the header image stored in an S3 bucket
 const image =
@@ -14,6 +15,7 @@ const image =
 const Header = () => {
   // hook to navigate programmatically within the app
   const navigateTo = useNavigate();
+  const theme = useTheme();
 
   // returns the Header component
   return (
@@ -38,13 +40,13 @@ const Header = () => {
         }}
       >
         <Box
-          className='hero-section-image'
+          className="hero-section-image"
           sx={{
             width: { xs: '100%', md: '50%' },
             height: '100%',
           }}
         >
-          <img src={image} height='100%' width='100%' alt='Shopping Hero' />
+          <img src={image} height="100%" width="100%" alt="Shopping Hero" />
         </Box>
         <Box
           sx={{
@@ -61,7 +63,7 @@ const Header = () => {
             A marketplace for the students by the students
           </p>
           <Button
-            className='btn btn-outline-primary'
+            className="btn btn-outline-primary"
             style={{
               backgroundColor: theme.primary.red,
               color: 'white',
@@ -77,6 +79,23 @@ const Header = () => {
             }
           >
             Explore Now
+          </Button>
+
+          <Button
+            className="btn button"
+            style={{
+              background: 'white',
+              color: theme.primary.red,
+              marginTop: '10px',
+              fontFamily: 'Inter',
+              cursor: 'pointer',
+              width: '200px',
+              borderRadius: '10px',
+              height: '40px',
+            }}
+            onClick={() => navigateTo('/add-item')}
+          >
+            List Items
           </Button>
         </Box>
       </Box>

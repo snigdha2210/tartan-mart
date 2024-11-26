@@ -42,6 +42,11 @@ def validate_jwt(view_func):
         try:
             jwt_token = token.split(' ')[1]
             payload = parse_jwt(jwt_token)
+            email = payload.get('email')
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({"message": "User unidentified."}, status=status.HTTP_401_UNAUTHORIZED)
         except:
             return Response({'message': 'JWT Token cannot be decoded.'}, status=status.HTTP_401_UNAUTHORIZED)
 

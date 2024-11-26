@@ -20,14 +20,14 @@ export default function ClickPopup({ login }) {
   const { email, password } = formData;
 
   // function to handle form submission and toggle popup visibility
-  const handlingSubmit = (e) => {
+  const handlingSubmit = e => {
     e.preventDefault();
     setAnchor(anchor ? null : e.currentTarget);
     login(email, password);
   };
 
   // function to handle button click to toggle popup visibility
-  const handleClick = (event) => {
+  const handleClick = event => {
     setAnchor(anchor ? null : event.currentTarget);
   };
 
@@ -43,7 +43,7 @@ export default function ClickPopup({ login }) {
       </IconButton>
       <BasePopup id={id} open={open} anchor={anchor}>
         <PopupBody>
-          <form method='POST' onSubmit={(e) => handlingSubmit(e)}>
+          <form method="POST" onSubmit={e => handlingSubmit(e)}>
             <LoginButton />
           </form>
         </PopupBody>

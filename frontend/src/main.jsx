@@ -1,13 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Provider } from 'react-redux';
 import { store, persistor } from './store';
 // import persistor from './store'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { PersistGate } from 'redux-persist/integration/react'
+import { PersistGate } from 'redux-persist/integration/react';
 
 export const theme = createTheme({
   primary: {
@@ -23,12 +23,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <ThemeProvider theme={theme}>
-        <GoogleOAuthProvider clientId={import.meta.env.VITE_REACT_APP_CLIENT_ID}>
+        <GoogleOAuthProvider
+          clientId={import.meta.env.VITE_REACT_APP_CLIENT_ID}
+        >
           <React.StrictMode>
             <App />
           </React.StrictMode>
         </GoogleOAuthProvider>
       </ThemeProvider>
     </PersistGate>
-  </Provider>,
-)
+  </Provider>
+);

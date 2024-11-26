@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator 
 
 ADDRESS_LIMIT = 1500
-DEFAULT_ITEM_IMAGE = 'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/full-items-inside-a-shopping-bag.svg'
+DEFAULT_ITEM_IMAGE = 'https://cmumarketplace.s3.amazonaws.com/media/images/table1.jpeg'
 
 class CustomUser(AbstractUser):
     """
@@ -153,7 +153,7 @@ class Item(models.Model):
         ('delisted', 'Delisted'),
         ('deleted', 'Deleted'),
     )
-    current_status = models.CharField(max_length=20, choices=CURRENT_STATUS_CHOICES, default='listed')
+    current_status = models.CharField(max_length=20, choices=CURRENT_STATUS_CHOICES, null=False)
 
     image = models.ImageField(upload_to="images/", blank=True, null=True, default=DEFAULT_ITEM_IMAGE)
     image_b64 = models.CharField(max_length=9999999999, null=True, blank=True)

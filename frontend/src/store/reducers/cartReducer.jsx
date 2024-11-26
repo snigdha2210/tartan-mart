@@ -15,7 +15,7 @@ function calculateTotalPrice(cartItems) {
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.ADD_TO_CART:
-      const existingItemIndex = state.cartItems.findIndex((item) => {
+      const existingItemIndex = state.cartItems.findIndex(item => {
         return item.item.id === action.item.item.id;
       });
 
@@ -38,7 +38,7 @@ const cartReducer = (state = initialState, action) => {
 
         if (
           action.item.item.quantity ==
-          updatedCartItems[existingItemIndex].quantity &&
+            updatedCartItems[existingItemIndex].quantity &&
           action.quantity == -1
         ) {
           updatedCartItems[existingItemIndex].quantity += action.quantity;
@@ -74,7 +74,7 @@ const cartReducer = (state = initialState, action) => {
 
     case actionTypes.REMOVE_FROM_CART:
       const updatedCartItems = state.cartItems.filter(
-        (item) => item.item.id !== action.itemId
+        item => item.item.id !== action.itemId
       );
       return {
         ...state,
@@ -83,8 +83,8 @@ const cartReducer = (state = initialState, action) => {
       };
 
     case actionTypes.CLEAR_CART:
-      console.log("CART CLEARED!");
-      return initialState
+      console.log('CART CLEARED!');
+      return initialState;
 
     default:
       return state;

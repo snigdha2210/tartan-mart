@@ -15,10 +15,10 @@ import { deleteItem } from '../store/actions/actions.jsx';
 import API_ENDPOINTS from '../constants/apiEndpoints.js';
 import { filterActiveSold } from '../util/profile.jsx';
 
-const handleOpenDelete = (setter) => {
+const handleOpenDelete = setter => {
   setter(true);
 };
-const handleCloseDelete = (setter) => {
+const handleCloseDelete = setter => {
   setter(false);
 };
 
@@ -43,10 +43,10 @@ function renderItem({
                 if (withUpdate.delete === true) {
                   return (
                     <>
-                      <Tooltip title='Delete'>
+                      <Tooltip title="Delete">
                         <ListItemButton
-                          edge='end'
-                          aria-label='delete'
+                          edge="end"
+                          aria-label="delete"
                           onClick={() => handleOpenDelete(setOpenDelete)}
                         >
                           <DeleteIcon sx={{ color: theme.primary.coolGray }} />
@@ -70,7 +70,7 @@ function renderItem({
                           }}
                         >
                           <Typography
-                            id='modal-modal-description'
+                            id="modal-modal-description"
                             sx={{
                               mt: 2,
                               color: theme.primary.coolGray,
@@ -82,7 +82,7 @@ function renderItem({
                             active it will be deleted permanently.
                           </Typography>
                           <div
-                            className='confirm-delete'
+                            className="confirm-delete"
                             style={{
                               display: 'flex',
                               marginBottom: '20px',
@@ -132,7 +132,7 @@ function renderItem({
                 <Chip
                   sx={{ marginLeft: '20px' }}
                   label={item.category}
-                  variant='outlined'
+                  variant="outlined"
                 />
               </>
             }
@@ -152,7 +152,7 @@ const ItemList = ({ items, withUpdate }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [errorDisplay, setErrorDisplay] = useState('none');
 
-  const itemClickHandler = (id) => {
+  const itemClickHandler = id => {
     navigateTo(`/listings/item-detail/${id}`);
   };
 
@@ -162,7 +162,7 @@ const ItemList = ({ items, withUpdate }) => {
     return ret;
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = async id => {
     setOpenDelete(false);
     try {
       let selectedItem = items[id - 1];
@@ -194,7 +194,7 @@ const ItemList = ({ items, withUpdate }) => {
   };
   return (
     <>
-      <Alert sx={{ display: errorDisplay }} severity='error'>
+      <Alert sx={{ display: errorDisplay }} severity="error">
         {errorMessage}
       </Alert>
       <List dense={true} sx={{ backgroundColor: 'white' }}>

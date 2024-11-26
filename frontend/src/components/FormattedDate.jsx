@@ -2,7 +2,7 @@
 import React from 'react';
 
 // defines the formatteddate functional component that takes a 'date' prop
-const FormattedDate = (date) => {
+const FormattedDate = date => {
   // formats the incoming date using toLocaleDateString
   const formattedDate = new Date(date.date).toLocaleDateString('en-US', {
     month: 'long',
@@ -11,7 +11,7 @@ const FormattedDate = (date) => {
   });
 
   // returns the formatted date
-  return <div>{formattedDate}</div>;
+  return <>{formattedDate}</>;
 };
 
 // exports the formatteddate component

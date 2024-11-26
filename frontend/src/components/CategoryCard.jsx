@@ -15,16 +15,19 @@ export default function CategoryCard(props) {
 
   // returns the category card component
   return (
-    <div onClick={handleCardClick} className='category-list'>
-      <div className='div-category-image'>
-        <img
-          src={imageUrl}
-          className='category-image'
-          alt={props.category.name}
-        />
-      </div>
-      <div className='category-text'>
-        <Typography gutterBottom variant='h6' component='div'>
+    <div onClick={handleCardClick} className="category-list">
+      {/* <div className='div-category-image'> */}
+      <img
+        src={imageUrl}
+        className="category-image"
+        alt={props.category.name}
+        style={{
+          borderRadius: 10,
+        }}
+      />
+      {/* </div> */}
+      <div className="category-text">
+        <Typography gutterBottom variant="h6" component="div">
           {props.category.name}
         </Typography>
       </div>

@@ -2,13 +2,13 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from django.db import transaction
 
-from cmumarketplace.apis.util.utils import validate_jwt
+from cmumarketplace.apis.util.utils import get_authenticated_user, validate_jwt
 from cmumarketplace.apis.v1.auth import auth_health_check, auth_validate_google_oauth_token
 
 
 from rest_framework.decorators import api_view
 
-from cmumarketplace.apis.v1.items import items_get_item, items_get_items
+from cmumarketplace.apis.v1.items import items_get_item, items_get_item_authed, items_get_items, items_get_items_authed
 from cmumarketplace.apis.v1.listings import listings_add_listing, listings_delete_listing, listings_get_listing, listings_get_listings, listings_update_listing
 from cmumarketplace.apis.v1.profiles import profiles_get_profile, profiles_update_profile
 
@@ -99,7 +99,7 @@ def delete_listing(request, listing_id):
 
 # Item APIs
 @api_view(['GET'])
-@validate_jwt
+# @validate_jwt
 def get_item(request, id):
     """
     Retrieve details of an item.
@@ -117,7 +117,14 @@ def get_item(request, id):
             if successful, or an error message if the item is not found.
 
     """
-    return items_get_item(request, id)
+    try:
+        user = get_authenticated_user(request)
+        print("USER:", user)
+        if user:
+            return items_get_item_authed(request, id)
+        return items_get_item(request, id)
+    except:
+        return items_get_item(request, id)
     
 @api_view(['GET'])
 def get_items(request):
@@ -135,7 +142,13 @@ def get_items(request):
         Response: A JSON response containing the details of the order, including
             buyer and seller information.
     """
-    return items_get_items(request)
+    try:
+        user = get_authenticated_user(request)
+        if user:
+            return items_get_items_authed(request)
+        return items_get_items(request)
+    except:
+        return items_get_items(request)
 
 
 # Profile APIs

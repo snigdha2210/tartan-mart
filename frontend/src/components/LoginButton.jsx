@@ -4,7 +4,7 @@ import API_ENDPOINTS from '../constants/apiEndpoints';
 import { getRequestAuthed, postRequest } from '../util/api';
 import { useDispatch } from 'react-redux';
 import { userLogin } from '../store/actions/actions';
-import { refreshProfile } from '../store/actions/actions.jsx';
+import { refreshProfile, updateItems } from '../store/actions/actions.jsx';
 import { filterActiveSold } from '../util/profile.jsx';
 
 const LoginButton = ({ onSuccess, onFailure }) => {
@@ -14,21 +14,38 @@ const LoginButton = ({ onSuccess, onFailure }) => {
       const data = await getRequestAuthed(API_ENDPOINTS.getProfile);
       if (data) {
         let new_items = filterActiveSold(data['items']);
-        dispatch(
-          refreshProfile(
-            new_items,
-            data['items_order'],
-            data['profile'],
-            data['orders']
-          )
-        );
+        dispatch(refreshProfile(data['listings'], data['profile']));
       }
     } catch (error) {
       console.error('Error in GET request:', error);
     }
   };
 
-  const handlePostRequest = async (body) => {
+  const fetchItemsDataInit = async isFilter => {
+    // console.log("SEARCHING..." + searchStateVar);
+    try {
+      const url = new URL(API_ENDPOINTS.getItems);
+      if (isFilter == true) {
+        url.searchParams.append('search', searchStateVar);
+        url.searchParams.append(
+          'category',
+          categoryFilter.join(',').toLowerCase()
+        );
+        url.searchParams.append('minPrice', priceRange[0]);
+        url.searchParams.append('maxPrice', priceRange[1]);
+      }
+
+      const response = await getRequestAuthed(url.toString());
+
+      if (response) {
+        dispatch(updateItems(response));
+      }
+    } catch (error) {
+      console.error('Error in search API request:', error);
+    }
+  };
+
+  const handlePostRequest = async body => {
     try {
       const response = await postRequest(
         API_ENDPOINTS.validateToken,
@@ -37,8 +54,11 @@ const LoginButton = ({ onSuccess, onFailure }) => {
       );
       if (response) {
         document.cookie = `jwt=${body.credential}; SameSite=Strict`;
+
+        await fetchProfileDataInit();
+        await fetchItemsDataInit(false);
+
         dispatch(userLogin(response.name, response.email, response.picture));
-        fetchProfileDataInit();
       }
     } catch (error) {
       console.error('Error in POST request:', error);
@@ -49,7 +69,7 @@ const LoginButton = ({ onSuccess, onFailure }) => {
     <>
       <form>
         <GoogleLogin
-          onSuccess={(credentialResponse) => {
+          onSuccess={credentialResponse => {
             handlePostRequest(credentialResponse);
           }}
           onError={() => {

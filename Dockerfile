@@ -11,10 +11,10 @@ RUN apt-get update && \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get upgrade && apt-get -y install pkg-config \
- build-essential \
- default-mysql-server \
- default-libmysqlclient-dev
+RUN apt-get update && apt-get -y install pkg-config \
+build-essential \
+default-mysql-server \
+default-libmysqlclient-dev
 
 COPY requirements.txt /app/
 RUN pip3 install --no-cache-dir -r requirements.txt

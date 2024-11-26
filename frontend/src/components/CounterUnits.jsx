@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { ButtonGroup } from '@mui/material';
 import { useTheme } from '@emotion/react';
-import { addToCart, removeFromCart } from '../store/actions/actions';
+// import { addToCart, removeFromCart } from '../store/actions/actions';
 import { useDispatch } from 'react-redux';
 
 // defines the counterunits functional component with 'selectedItem' as a prop
@@ -31,7 +31,7 @@ const CounterUnits = ({ selectedItem }) => {
       setIsAddDisabled(true);
       return;
     }
-    dispatch(addToCart(selectedItem));
+    // dispatch(addToCart(selectedItem));
     updateCounter(counter + 1);
   };
 
@@ -42,13 +42,13 @@ const CounterUnits = ({ selectedItem }) => {
       return;
     }
     setIsAddDisabled(false);
-    dispatch(addToCart(selectedItem, -1));
+    // dispatch(addToCart(selectedItem, -1));
     updateCounter(counter - 1);
   };
 
   // returns the CounterUnits component
   return (
-    <ButtonGroup size='small' aria-label='small outlined button group'>
+    <ButtonGroup size="small" aria-label="small outlined button group">
       <Button
         style={{
           color: isAddDisabled ? theme.primary.gray : theme.primary.red,
