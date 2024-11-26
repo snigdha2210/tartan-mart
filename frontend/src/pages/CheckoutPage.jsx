@@ -22,7 +22,7 @@ import { useSelector } from 'react-redux';
 import { postRequest } from '../util/api.jsx';
 import ErrorModal from '../components/ErrorModal.jsx';
 
-const API_URL = import.meta.env.VITE_REACT_APP_LOCAL_BACKEND_URL;
+const API_URL = import.meta.env.VITE_REACT_APP_PROD_BACKEND_URL;
 
 export default function CheckoutPage() {
   const [message, setMessage] = useState('');

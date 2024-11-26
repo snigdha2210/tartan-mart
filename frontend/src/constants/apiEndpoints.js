@@ -1,4 +1,4 @@
-const BASE_URL = `${import.meta.env.VITE_REACT_APP_LOCAL_BACKEND_URL}/`;
+const BASE_URL = `${import.meta.env.VITE_REACT_APP_PROD_BACKEND_URL}/`;
 const API_ENDPOINTS = {
   healthCheck: BASE_URL + 'healthcheck/',
   validateToken: BASE_URL + 'token/',
