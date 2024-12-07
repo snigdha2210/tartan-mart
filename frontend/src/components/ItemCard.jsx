@@ -1,4 +1,5 @@
-// import necessary libraries and object
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -6,30 +7,66 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Chip } from '@mui/material';
 import { CardActionArea } from '@mui/material';
+import AWS from 'aws-sdk';
+import { getS3Instance } from '../utils/awsUtils';
 
 // default image URL for the card if no image is provided
 const DEFAULT_IMAGE_URL =
   'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg';
 
-// defines the itemcard functional component with 'props' as a parameter
+// Function to fetch the signed URL from S3
+const fetchS3URL = async imageName => {
+  const s3 = getS3Instance();
+  const params = {
+    Bucket: import.meta.env.VITE_REACT_APP_S3_BUCKET,
+    Key: imageName,
+  };
+
+  try {
+    const url = await s3.getSignedUrlPromise('getObject', params);
+    console.log('The URL is', url);
+    return url;
+  } catch (error) {
+    console.error('Error fetching signed URL:', error);
+    return null;
+  }
+};
+
+// ItemCard functional component
 export default function ItemCard(props) {
-  // function to handle click event on the card
+  // If props.product is undefined, return null or a fallback UI
+  if (!props.product) {
+    console.error('Product is undefined or null');
+    return <div>Loading...</div>; // Fallback UI or handle it gracefully
+  }
+
+  const [imageUrl, setImageUrl] = React.useState(null);
+
+  // Handle the async fetching of the image URL inside useEffect
+  React.useEffect(() => {
+    const getImageUrl = async () => {
+      let url = null;
+      if (props.product.image && props.product.image.length > 0) {
+        const imageName = props.product.image.split('/').pop();
+        url = await fetchS3URL(imageName);
+      } else {
+        url = DEFAULT_IMAGE_URL;
+      }
+      setImageUrl(url);
+    };
+
+    getImageUrl();
+  }, [props.product.image]); // Re-run if product.image changes
+
+  // Handle click event on the card
   const handleCardClick = () => {
     props.onItemClick(props.product);
   };
 
-  // determine the image URL to use, defaulting to DEFAULT_IMAGE_URL if none provided
-  const imageUrl =
-    props.product.image && props.product.image.length > 0
-      ? props.product.image
-      : DEFAULT_IMAGE_URL;
-
-  // returns the itemcard component
+  // Return the itemcard component, including fallback for imageUrl
   return (
     <Card
       sx={{
-        // maxWidth: 400,
-        // minWidth: 400,
         width: 400,
       }}
     >
@@ -37,7 +74,7 @@ export default function ItemCard(props) {
         <CardMedia
           component="img"
           height={props.height}
-          image={imageUrl}
+          image={imageUrl || DEFAULT_IMAGE_URL} // Fallback to default if imageUrl is still null
           alt={props.product.name}
           sx={{
             objectFit: 'cover',
