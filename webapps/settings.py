@@ -199,7 +199,7 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Strict'
 SESSION_COOKIE_DOMAIN = PROD_SESSION_COOKIE_DOMAIN
 
-AUTH_USER_MODEL = 'tartanmart-public.CustomUser'
+AUTH_USER_MODEL = 'cmumarketplace.CustomUser'
 
 MEDIA_ROOT = BASE_DIR / 'images'
 
