@@ -58,7 +58,7 @@ if USE_S3:
     # s3 public media settings
     PUBLIC_MEDIA_LOCATION = 'media'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-    DEFAULT_FILE_STORAGE = 'cmumarketplace.storage_backends.PublicMediaStorage'
+    DEFAULT_FILE_STORAGE = f'{AWS_STORAGE_BUCKET_NAME}.storage_backends.PublicMediaStorage'
 else:
     MEDIA_URL = '/mediafiles/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
@@ -102,7 +102,7 @@ MIDDLEWARE = [
 ]
 
 #AUTH_USER_MODEL = 'backend.CustomUser'
-AUTH_USER_MODEL = "cmumarketplace.CustomUser" 
+# AUTH_USER_MODEL = "tartanmart-public.CustomUser" 
 
 ROOT_URLCONF = 'webapps.urls'
 
@@ -199,7 +199,7 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Strict'
 SESSION_COOKIE_DOMAIN = PROD_SESSION_COOKIE_DOMAIN
 
-AUTH_USER_MODEL = 'cmumarketplace.CustomUser'
+AUTH_USER_MODEL = 'tartanmart-public.CustomUser'
 
 MEDIA_ROOT = BASE_DIR / 'images'
 
