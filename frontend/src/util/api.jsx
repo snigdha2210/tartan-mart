@@ -1,6 +1,11 @@
 export const getRequest = async url => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     const data = await response.json();
     if (data.message) {
       throw new Error(`${data.message}`);
@@ -24,7 +29,9 @@ export const getRequestAuthed = async url => {
   }
   try {
     const response = await fetch(url, {
+      credentials: 'include',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jwt,
       },
     });
