@@ -7,8 +7,9 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Chip } from '@mui/material';
 import { CardActionArea } from '@mui/material';
-import AWS from 'aws-sdk';
 import { getS3Instance } from '../utils/awsUtils';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 
 // default image URL for the card if no image is provided
 const DEFAULT_IMAGE_URL =
@@ -16,14 +17,14 @@ const DEFAULT_IMAGE_URL =
 
 // Function to fetch the signed URL from S3
 const fetchS3URL = async imageName => {
-  const s3 = getS3Instance();
-  const params = {
+  const s3Client = getS3Instance();
+  const command = new GetObjectCommand({
     Bucket: import.meta.env.VITE_REACT_APP_S3_BUCKET,
     Key: imageName,
-  };
+  });
 
   try {
-    const url = await s3.getSignedUrlPromise('getObject', params);
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
     console.log('The URL is', url);
     return url;
   } catch (error) {

@@ -11,6 +11,8 @@
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.535.0",
+    "@aws-sdk/s3-request-presigner": "^3.535.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@fontsource/inter": "^5.0.17",
@@ -19,7 +21,6 @@
     "@mui/joy": "^5.0.0-beta.32",
     "@mui/material": "^5.15.14",
     "@react-oauth/google": "^0.12.1",
-    "aws-sdk": "^2.1594.0",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "react": "^18.2.0",

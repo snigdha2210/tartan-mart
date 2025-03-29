@@ -1,12 +1,14 @@
-import AWS from 'aws-sdk';
+import { S3Client } from '@aws-sdk/client-s3';
 
 export function getS3Instance() {
   // Initialize AWS S3 instance with environment variables
-  const s3 = new AWS.S3({
-    accessKeyId: import.meta.env.VITE_REACT_APP_S3_ACCESS_ID,
-    secretAccessKey: import.meta.env.VITE_REACT_APP_S3_SECRET_KEY,
-    // region: import.meta.env.VITE_REACT_APP_S3_REGION, // Example: 'us-east-1'
+  const s3Client = new S3Client({
+    region: 'eu-north-1', // Stockholm region
+    credentials: {
+      accessKeyId: import.meta.env.VITE_REACT_APP_S3_ACCESS_ID,
+      secretAccessKey: import.meta.env.VITE_REACT_APP_S3_SECRET_KEY,
+    },
   });
 
-  return s3;
+  return s3Client;
 }

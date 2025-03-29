@@ -173,3 +173,5 @@ config.ini
 .env
 .env.local
 node_modules
+# Local Netlify folder
+.netlify

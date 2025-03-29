@@ -12,46 +12,37 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-from configparser import ConfigParser
-
-CONFIG = ConfigParser()
-CONFIG.read(BASE_DIR / "config.ini")
-
-SECRET_KEY = CONFIG.get("Django", "secret")
-LOCAL_FRONTEND_URL = CONFIG.get("Local", "frontend_url")
-PROD_FRONTEND_URL = CONFIG.get("Prod", "frontend_url")
-LOCAL_BACKEND_URL = CONFIG.get("Local", "backend_url")
-PROD_BACKEND_URL = CONFIG.get("Prod", "backend_url")
-LOCAL_SESSION_COOKIE_DOMAIN = CONFIG.get("Local", "session_cookie_domain")
-PROD_SESSION_COOKIE_DOMAIN = CONFIG.get("Prod", "session_cookie_domain")
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-eaqqusio0hbm3r@h!s82i^(7&qb)dso8_&%%9h24_woen7hm4ed')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES':
                   ['rest_framework.permissions.AllowAny']
 }
 
-STRIPE_SECRET_KEY=CONFIG.get("Stripe", "secret_key")
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 
-SITE_URL=PROD_FRONTEND_URL
+SITE_URL = os.environ.get('SITE_URL')
 
-USE_S3 = CONFIG.get("S3", 'USE_S3') == 'TRUE'
+USE_S3 = os.environ.get('USE_S3', 'False') == 'True'
 
 if USE_S3:
     # aws settings
-    AWS_ACCESS_KEY_ID = CONFIG.get("S3",'AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = CONFIG.get("S3",'AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = CONFIG.get("S3",'AWS_STORAGE_BUCKET_NAME')
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
     AWS_DEFAULT_ACL = None
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
@@ -60,9 +51,8 @@ if USE_S3:
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
     DEFAULT_FILE_STORAGE = f'{AWS_STORAGE_BUCKET_NAME}.storage_backends.PublicMediaStorage'
 else:
-    MEDIA_URL = '/mediafiles/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
-
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Application definition
 
@@ -129,10 +119,11 @@ WSGI_APPLICATION = 'webapps.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -171,17 +162,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    # 'http://127.0.0.1:5173',
-    LOCAL_FRONTEND_URL,
-   PROD_FRONTEND_URL,
-]
+# CORS settings
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -195,13 +184,19 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# CSRF settings
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'Strict'
-SESSION_COOKIE_DOMAIN = PROD_SESSION_COOKIE_DOMAIN
+CSRF_COOKIE_SAMESITE = 'Lax'  # Changed from 'Strict' to 'Lax' for development
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+
+# Session settings
+SESSION_COOKIE_DOMAIN = os.environ.get('SESSION_COOKIE_DOMAIN')
+SESSION_COOKIE_SAMESITE = 'Lax'  # Changed from 'Strict' to 'Lax' for development
 
 AUTH_USER_MODEL = 'cmumarketplace.CustomUser'
 
-MEDIA_ROOT = BASE_DIR / 'images'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 
 LOGGING = {
