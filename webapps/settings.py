@@ -34,7 +34,9 @@ REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES':
 
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 
-SITE_URL = os.environ.get('SITE_URL')
+# Frontend URL settings
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:4173')
+SITE_URL = os.environ.get('SITE_URL', FRONTEND_URL)
 
 USE_S3 = os.environ.get('USE_S3', 'False') == 'True'
 

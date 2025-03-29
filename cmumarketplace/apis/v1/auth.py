@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
@@ -16,8 +15,7 @@ from rest_framework.response import Response
 
 User = get_user_model()
 
-LOCAL_FRONTEND_URL = settings.LOCAL_FRONTEND_URL
-PROD_FRONTEND_URL = settings.PROD_FRONTEND_URL
+FRONTEND_URL = settings.FRONTEND_URL
 
 def auth_health_check(request):
     """
@@ -62,7 +60,7 @@ def auth_validate_google_oauth_token(request):
     decoded_token = json.dumps(decoded_token)
     response_to_send = HttpResponse(decoded_token, content_type='application/json')
 
-    allowed_domains = [LOCAL_FRONTEND_URL, PROD_FRONTEND_URL]
+    allowed_domains = [FRONTEND_URL]
     origin = request.headers.get('Origin')
     if origin in allowed_domains:
         response_to_send['Access-Control-Allow-Origin'] = origin
