@@ -125,6 +125,10 @@ DATABASES = {
         default='sqlite:///db.sqlite3',
         conn_max_age=600,
         conn_health_checks=True,
+        ssl_require=True,  # Required for Render's PostgreSQL
+        options={
+            'sslmode': 'require',  # Required for Render's PostgreSQL
+        }
     )
 }
 
@@ -189,12 +193,14 @@ CORS_ALLOW_HEADERS = [
 
 # CSRF settings
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'Lax'  # Changed from 'Strict' to 'Lax' for development
+CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 # Session settings
 SESSION_COOKIE_DOMAIN = os.environ.get('SESSION_COOKIE_DOMAIN')
-SESSION_COOKIE_SAMESITE = 'Lax'  # Changed from 'Strict' to 'Lax' for development
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = True  # Required for HTTPS
+CSRF_COOKIE_SECURE = True  # Required for HTTPS
 
 AUTH_USER_MODEL = 'cmumarketplace.CustomUser'
 
@@ -211,18 +217,23 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'DEBUG',
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
         'django.request': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
+        },
+        'cmumarketplace': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }
