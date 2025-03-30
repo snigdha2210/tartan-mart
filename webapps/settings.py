@@ -125,13 +125,15 @@ DATABASES = {
         default='sqlite:///db.sqlite3',
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=True,  # Required for Render's PostgreSQL
-        options={
-            'sslmode': 'require',  # Required for Render's PostgreSQL
-        }
+        ssl_require=True  # Required for Render's PostgreSQL
     )
 }
 
+# Add SSL configuration for PostgreSQL
+if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require'
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
