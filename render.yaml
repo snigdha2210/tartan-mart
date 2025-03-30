@@ -2,8 +2,12 @@ services:
   - type: web
     name: tartanmart-backend
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py makemigrations cmumarketplace --noinput
+      python manage.py migrate --noinput
     startCommand: gunicorn webapps.wsgi:application
+    healthCheckPath: /health/
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
