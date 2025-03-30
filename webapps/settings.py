@@ -134,6 +134,14 @@ if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
         'sslmode': 'require'
     }
 
+# Ensure migrations are run
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True
+    )
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
