@@ -60,7 +60,7 @@ else:
 # Application definition
 
 # CORS_ORIGIN_ALLOW_ALL = True
-ALLOWED_HOSTS = ['*']
+
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',

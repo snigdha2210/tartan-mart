@@ -4,8 +4,10 @@ services:
     env: python
     buildCommand: |
       pip install -r requirements.txt
+      echo "Running migrations..."
       python manage.py makemigrations cmumarketplace --noinput
       python manage.py migrate --noinput
+      echo "Migrations completed"
     startCommand: gunicorn webapps.wsgi:application
     healthCheckPath: /health/
     envVars:
