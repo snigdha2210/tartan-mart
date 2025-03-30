@@ -124,12 +124,11 @@ DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
         conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True  # Required for Render's PostgreSQL
+        conn_health_checks=True
     )
 }
 
-# Add SSL configuration for PostgreSQL
+# Add SSL configuration only for PostgreSQL
 if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
     DATABASES['default']['OPTIONS'] = {
         'sslmode': 'require'

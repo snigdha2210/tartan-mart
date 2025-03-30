@@ -76,11 +76,24 @@ def get_error_string(serializer):
 
 def get_authenticated_user(request):
     token = request.headers.get('Authorization')
-    decoded_token = parse_jwt(token)
-    email = decoded_token.get('email')
-    
+    if not token or not token.startswith('Bearer '):
+        return None
+        
     try:
-        user = User.objects.get(email=email)
-        return user
-    except User.DoesNotExist:
+        jwt_token = token.split(' ')[1]
+        decoded_token = parse_jwt(jwt_token)
+        if not decoded_token:
+            return None
+            
+        email = decoded_token.get('email')
+        if not email:
+            return None
+            
+        try:
+            user = User.objects.get(email=email)
+            return user
+        except User.DoesNotExist:
+            return None
+    except Exception as e:
+        print(f"Error in get_authenticated_user: {e}")
         return None
