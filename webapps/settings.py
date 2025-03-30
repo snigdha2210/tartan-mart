@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-eaqqusio0hbm3r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'tartan-mart-backend.onrender.com').split(',')
 
 REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES':
                   ['rest_framework.permissions.AllowAny']
