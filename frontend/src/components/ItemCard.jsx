@@ -13,7 +13,7 @@ import { GetObjectCommand } from '@aws-sdk/client-s3';
 
 // default image URL for the card if no image is provided
 const DEFAULT_IMAGE_URL =
-  'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg';
+  'https://tartan-mart-pictures.s3.us-east-2.amazonaws.com/default-image.png';
 
 // Function to fetch the signed URL from S3
 const fetchS3URL = async imageName => {

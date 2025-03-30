@@ -9,7 +9,7 @@ import { useTheme } from '@emotion/react';
 
 // URL of the header image stored in an S3 bucket
 const image =
-  'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/shopping-hero.svg';
+  'https://tartan-mart-pictures.s3.us-east-2.amazonaws.com/shopping-hero.svg';
 
 // defines the header functional component
 const Header = () => {

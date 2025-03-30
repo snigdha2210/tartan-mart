@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator 
 
 ADDRESS_LIMIT = 1500
-DEFAULT_ITEM_IMAGE = 'https://cmumarketplace.s3.amazonaws.com/media/images/table1.jpeg'
+DEFAULT_ITEM_IMAGE = 'https://tartan-mart-pictures.s3.amazonaws.com/default-image.png'
 
 class CustomUser(AbstractUser):
     """

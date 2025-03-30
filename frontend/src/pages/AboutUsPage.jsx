@@ -10,7 +10,7 @@ import Link from '@mui/material/Link';
 
 //background image
 const image =
-  'https://cmumarketplace.s3.us-east-2.amazonaws.com/static/about-us.svg';
+  'https://tartan-mart-pictures.s3.us-east-2.amazonaws.com/about-us.svg';
 
 // About Us Page component
 const AboutUsPage = () => {
